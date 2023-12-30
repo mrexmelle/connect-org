@@ -1,0 +1,9 @@
+app:
+  datasource:
+    host: 127.0.0.1
+    port: 7687
+    user: neo4j
+    password: 123
+  server:
+    port: 8081
+    
