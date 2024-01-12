@@ -1,8 +1,74 @@
 basePath: /
+definitions:
+  github_com_mrexmelle_connect-orgs_internal_dto.ServiceError:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_organization.DeleteResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_organization.Entity:
+    properties:
+      emailAddress:
+        type: string
+      hierarchy:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      privateSlackChannel:
+        type: string
+      publicSlackChannel:
+        type: string
+    type: object
+  internal_organization.GetChildrenResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_organization.Entity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_organization.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_organization.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_organization.PostRequestDto:
+    properties:
+      emailAddress:
+        type: string
+      hierarchy:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      privateSlackChannel:
+        type: string
+      publicSlackChannel:
+        type: string
+    type: object
+  internal_organization.PostResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_organization.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: localhost:8081
 info:
   contact:
     email: mrexmelle@gmail.com
@@ -12,5 +78,95 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Connect Organization API
   version: 0.1.0
-paths: {}
+paths:
+  /organizations:
+    post:
+      consumes:
+      - application/json
+      description: Post a new organization
+      parameters:
+      - description: Organization Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_organization.PostRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.PostResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
+  /organizations/{id}:
+    delete:
+      description: Delete an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.DeleteResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
+    get:
+      description: Get an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
+  /organizations/{id}/children:
+    get:
+      description: Get children of an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.GetChildrenResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
 swagger: "2.0"
