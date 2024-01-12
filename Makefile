@@ -20,7 +20,7 @@ docker-push:
 	docker push $(IMAGE_NAME):$(VERSION)
 
 docs:
-	swag init -g cmd/main.go
+	swag init --parseDependency -g cmd/main.go
 
 test:
 	go test ./internal/...
