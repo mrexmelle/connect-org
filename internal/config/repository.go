@@ -8,18 +8,16 @@ import (
 
 type Repository interface {
 	GetProfile() string
-	GetDsn() string
-	GetDbUser() string
-	GetDbPassword() string
+	GetReadDsn() string
+	GetWriteDsn() string
 	GetPort() int
 }
 
 type RepositoryImpl struct {
-	Profile    string
-	Dsn        string
-	DbUser     string
-	DbPassword string
-	Port       int
+	Profile  string
+	ReadDsn  string
+	WriteDsn string
+	Port     int
 }
 
 func NewRepository() Repository {
@@ -40,19 +38,23 @@ func NewRepository() Repository {
 		panic(err)
 	}
 
-	dsn := "bolt://" + viper.GetString("app.datasource.host") + ":" + viper.GetString("app.datasource.port")
+	var readDsn = ""
+	for key, value := range viper.GetStringMapString("app.datasource.read") {
+		readDsn += string(key + "=" + value + " ")
+	}
 
-	dbUser := viper.GetString("app.datasource.user")
-	dbPassword := viper.GetString("app.datasource.password")
+	var writeDsn = ""
+	for key, value := range viper.GetStringMapString("app.datasource.write") {
+		writeDsn += string(key + "=" + value + " ")
+	}
 
 	port := viper.GetInt("app.server.port")
 
 	return &RepositoryImpl{
-		Profile:    profile,
-		Dsn:        dsn,
-		DbUser:     dbUser,
-		DbPassword: dbPassword,
-		Port:       port,
+		Profile:  profile,
+		ReadDsn:  readDsn,
+		WriteDsn: writeDsn,
+		Port:     port,
 	}
 }
 
@@ -60,16 +62,12 @@ func (r *RepositoryImpl) GetProfile() string {
 	return r.Profile
 }
 
-func (r *RepositoryImpl) GetDsn() string {
-	return r.Dsn
+func (r *RepositoryImpl) GetReadDsn() string {
+	return r.ReadDsn
 }
 
-func (r *RepositoryImpl) GetDbUser() string {
-	return r.DbUser
-}
-
-func (r *RepositoryImpl) GetDbPassword() string {
-	return r.DbPassword
+func (r *RepositoryImpl) GetWriteDsn() string {
+	return r.WriteDsn
 }
 
 func (r *RepositoryImpl) GetPort() int {
