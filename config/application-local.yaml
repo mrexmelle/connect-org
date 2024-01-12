@@ -1,9 +1,20 @@
 app:
   datasource:
-    host: 127.0.0.1
-    port: 7687
-    user: neo4j
-    password: 123
+    read:
+      host: 127.0.0.1
+      port: 5432
+      user: orgs_r
+      password: 123
+      dbname: orgs
+      sslmode: disable
+      timezone: Asia/Jakarta
+    write:
+      host: 127.0.0.1
+      port: 5432
+      user: orgs_w
+      password: 123
+      dbname: orgs
+      sslmode: disable
+      timezone: Asia/Jakarta
   server:
     port: 8081
-    
