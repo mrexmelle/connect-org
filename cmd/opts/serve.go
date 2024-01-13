@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-orgs/internal/organization"
 	"github.com/spf13/cobra"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -21,11 +22,16 @@ func Serve(cmd *cobra.Command, args []string) {
 	container := dig.New()
 
 	container.Provide(config.NewRepository)
+	container.Provide(organization.NewRepository)
 
 	container.Provide(config.NewService)
+	container.Provide(organization.NewService)
+
+	container.Provide(organization.NewController)
 
 	process := func(
 		configService *config.Service,
+		organizationController *organization.Controller,
 	) {
 		r := chi.NewRouter()
 
@@ -38,8 +44,20 @@ func Serve(cmd *cobra.Command, args []string) {
 		}))
 
 		if configService.GetProfile() == "local" {
-			r.Mount("/swagger", httpSwagger.WrapHandler)
+			r.Mount("/swagger", httpSwagger.Handler(
+				httpSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", configService.GetPort())),
+				httpSwagger.UIConfig(map[string]string{
+					"defaultModelsExpandDepth": "-1",
+				}),
+			))
 		}
+
+		r.Route("/organizations", func(r chi.Router) {
+			r.Post("/", organizationController.Post)
+			r.Get("/{id}", organizationController.Get)
+			r.Delete("/{id}", organizationController.Delete)
+			r.Get("/{id}/children", organizationController.GetChildren)
+		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
 
