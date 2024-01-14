@@ -2,6 +2,7 @@ package organization
 
 import (
 	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-orgs/internal/tree"
 )
 
 type Service struct {
@@ -53,4 +54,30 @@ func (s *Service) RetrieveChildrenById(id string) ([]Entity, error) {
 		return []Entity{}, err
 	}
 	return result, nil
+}
+
+func (s *Service) RetrieveLineageById(id string) (*tree.Node[Entity], error) {
+	orgs, err := s.OrganizationRepository.FindLineageById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	orgTree := tree.New[Entity](".")
+	for i := 0; i < len(orgs); i++ {
+		orgTree.AssignEntity(orgs[i].Hierarchy, &orgs[i])
+	}
+	return orgTree.Root, nil
+}
+
+func (s *Service) RetrieveSiblingsAndAncestralSiblingsById(id string) (*tree.Node[Entity], error) {
+	orgs, err := s.OrganizationRepository.FindSiblingsAndAncestralSiblingsById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	orgTree := tree.New[Entity](".")
+	for i := 0; i < len(orgs); i++ {
+		orgTree.AssignEntity(orgs[i].Hierarchy, &orgs[i])
+	}
+	return orgTree.Root, nil
 }

@@ -8,3 +8,11 @@ type Entity struct {
 	PrivateSlackChannel string `json:"privateSlackChannel"`
 	PublicSlackChannel  string `json:"publicSlackChannel"`
 }
+
+func (e Entity) GetId() string {
+	return e.Id
+}
+
+func (e Entity) SetId(id string) {
+	(&e).Id = id
+}

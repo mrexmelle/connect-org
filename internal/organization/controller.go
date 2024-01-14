@@ -9,6 +9,7 @@ import (
 	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithdata"
 	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithoutdata"
 	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-orgs/internal/tree"
 )
 
 type Controller struct {
@@ -33,10 +34,10 @@ func NewController(cfg *config.Service, svc *Service) *Controller {
 // @Failure 500 "InternalServerError"
 // @Router /organizations/{id} [GET]
 func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
-	response, err := c.OrganizationService.RetrieveById(
+	data, err := c.OrganizationService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[Entity](response, err).RenderTo(w)
+	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
 // Post Organizations : HTTP endpoint to post new organizations
@@ -53,12 +54,12 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrParsingJson).RenderTo(w)
+		dtobuilderwithdata.New[Entity](nil, localerror.ErrBadJson).RenderTo(w)
 		return
 	}
 
-	response, err := c.OrganizationService.Create(requestBody)
-	dtobuilderwithdata.New[Entity](response, err).RenderTo(w)
+	data, err := c.OrganizationService.Create(requestBody)
+	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
 // Delete Organizations : HTTP endpoint to delete organizations
@@ -85,8 +86,40 @@ func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 "InternalServerError"
 // @Router /organizations/{id}/children [GET]
 func (c *Controller) GetChildren(w http.ResponseWriter, r *http.Request) {
-	response, err := c.OrganizationService.RetrieveChildrenById(
+	data, err := c.OrganizationService.RetrieveChildrenById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[[]Entity](&response, err).RenderTo(w)
+	dtobuilderwithdata.New[[]Entity](&data, err).RenderTo(w)
+}
+
+// Get Lineage of Organizations : HTTP endpoint to get the lineage of an organization
+// @Tags Organizations
+// @Description Get lineage of an organization
+// @Produce json
+// @Param id path string true "Organization ID"
+// @Success 200 {object} GetLineageResponseDto "Success Response"
+// @Failure 400 "BadRequest"
+// @Failure 500 "InternalServerError"
+// @Router /organizations/{id}/lineage [GET]
+func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
+	data, err := c.OrganizationService.RetrieveLineageById(
+		chi.URLParam(r, "id"),
+	)
+	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
+}
+
+// Get Siblings and Ancestral Siblings of Organizations : HTTP endpoint to get the siblings and ancestral siblings of an organization
+// @Tags Organizations
+// @Description Get siblings and ancestral siblings of an organization
+// @Produce json
+// @Param id path string true "Organization ID"
+// @Success 200 {object} GetSiblingsAndAncestralSiblingsDto "Success Response"
+// @Failure 400 "BadRequest"
+// @Failure 500 "InternalServerError"
+// @Router /organizations/{id}/siblings-and-ancestral-siblings [GET]
+func (c *Controller) GetSiblingsAndAncestralSiblings(w http.ResponseWriter, r *http.Request) {
+	data, err := c.OrganizationService.RetrieveSiblingsAndAncestralSiblingsById(
+		chi.URLParam(r, "id"),
+	)
+	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
 }
