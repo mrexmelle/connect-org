@@ -20,7 +20,8 @@ func NewService(
 	readDb, err := gorm.Open(
 		postgres.Open(strings.TrimSpace(cr.GetReadDsn())),
 		&gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger:         logger.Default.LogMode(logger.Info),
+			TranslateError: true,
 		},
 	)
 	if err != nil {
@@ -30,7 +31,8 @@ func NewService(
 	writeDb, err := gorm.Open(
 		postgres.Open(strings.TrimSpace(cr.GetWriteDsn())),
 		&gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger:         logger.Default.LogMode(logger.Info),
+			TranslateError: true,
 		},
 	)
 	if err != nil {

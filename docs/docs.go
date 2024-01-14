@@ -159,6 +159,74 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/organizations/{id}/lineage": {
+            "get": {
+                "description": "Get lineage of an organization",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Organizations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_organization.GetLineageResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/organizations/{id}/siblings-and-ancestral-siblings": {
+            "get": {
+                "description": "Get siblings and ancestral siblings of an organization",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Organizations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -170,6 +238,20 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity"
+                    }
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_organization.Entity"
                 }
             }
         },
@@ -218,11 +300,36 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_organization.GetLineageResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_organization.Entity"
+                    }
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
         "internal_organization.GetResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
                     "$ref": "#/definitions/internal_organization.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_organization.GetSiblingsAndAncestralSiblingsDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"

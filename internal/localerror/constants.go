@@ -10,7 +10,8 @@ import (
 
 var (
 	ErrAuthentication = errors.New("authentication_error")
-	ErrParsingJson    = errors.New("error_parsing_json")
+	ErrBadJson        = errors.New("bad_json")
+	ErrBadHierarchy   = errors.New("bad_hierarchy")
 )
 
 const (
@@ -28,5 +29,6 @@ var ErrorMap = map[error]CodePair{
 	gorm.ErrRecordNotFound:     NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
 	sql.ErrNoRows:              NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
 	ErrAuthentication:          NewCodePair(http.StatusUnauthorized, ErrAuthentication.Error()),
-	ErrParsingJson:             NewCodePair(http.StatusBadRequest, ErrParsingJson.Error()),
+	ErrBadJson:                 NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
+	ErrBadHierarchy:            NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
 }
