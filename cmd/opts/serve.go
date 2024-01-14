@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-orgs/internal/localerror"
 	"github.com/mrexmelle/connect-orgs/internal/organization"
 	"github.com/spf13/cobra"
 
@@ -25,6 +26,7 @@ func Serve(cmd *cobra.Command, args []string) {
 	container.Provide(organization.NewRepository)
 
 	container.Provide(config.NewService)
+	container.Provide(localerror.NewService)
 	container.Provide(organization.NewService)
 
 	container.Provide(organization.NewController)
@@ -57,6 +59,9 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}", organizationController.Get)
 			r.Delete("/{id}", organizationController.Delete)
 			r.Get("/{id}/children", organizationController.GetChildren)
+			r.Get("/{id}/lineage", organizationController.GetLineage)
+			r.Get("/{id}/siblings-and-ancestral-siblings", organizationController.
+				GetSiblingsAndAncestralSiblings)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)

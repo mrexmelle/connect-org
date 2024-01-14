@@ -7,6 +7,15 @@ definitions:
       message:
         type: string
     type: object
+  github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity'
+        type: array
+      data:
+        $ref: '#/definitions/internal_organization.Entity'
+    type: object
   internal_organization.DeleteResponseDto:
     properties:
       error:
@@ -36,10 +45,26 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
+  internal_organization.GetLineageResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_organization.Entity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
   internal_organization.GetResponseDto:
     properties:
       data:
         $ref: '#/definitions/internal_organization.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_organization.GetSiblingsAndAncestralSiblingsDto:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
@@ -163,6 +188,50 @@ paths:
           description: Success Response
           schema:
             $ref: '#/definitions/internal_organization.GetChildrenResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
+  /organizations/{id}/lineage:
+    get:
+      description: Get lineage of an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.GetLineageResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
+  /organizations/{id}/siblings-and-ancestral-siblings:
+    get:
+      description: Get siblings and ancestral siblings of an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsDto'
         "400":
           description: BadRequest
         "500":
