@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"github.com/mrexmelle/connect-orgs/internal/config"
+	"gorm.io/gorm"
 )
 
 type Repository interface {
 	Create(req *Entity) (*Entity, error)
+	UpdateById(fields map[string]interface{}, id string) error
 	FindById(id string) (*Entity, error)
 	DeleteById(id string) error
 	FindChildrenByHierarchy(hierarchy string) ([]Entity, error)
@@ -50,6 +52,36 @@ func (r *RepositoryImpl) Create(req *Entity) (*Entity, error) {
 	}
 
 	return req, nil
+}
+
+func (r *RepositoryImpl) UpdateById(fields map[string]interface{}, id string) error {
+	dbFields := map[string]interface{}{}
+
+	for i := range FieldsPatchable {
+		introspectedKey := FieldsPatchable[i]
+		value, ok := fields[introspectedKey]
+		if ok {
+			dbFields[introspectedKey] = value
+		}
+	}
+
+	if len(dbFields) > 0 {
+		dbFields["updated_at"] = time.Now()
+		result := r.ConfigService.WriteDb.
+			Table(r.TableName).
+			Where("id = ?", id).
+			Updates(dbFields)
+
+		if result.Error != nil {
+			return result.Error
+		}
+
+		if result.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+	}
+
+	return nil
 }
 
 func (r *RepositoryImpl) FindById(id string) (*Entity, error) {
