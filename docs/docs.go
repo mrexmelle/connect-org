@@ -124,6 +124,50 @@ const docTemplate = `{
                         "description": "InternalServerError"
                     }
                 }
+            },
+            "patch": {
+                "description": "Patch an organization",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Organizations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Organization Patch Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_organization.PatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_organization.PatchResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
             }
         },
         "/organizations/{id}/children": {
@@ -194,6 +238,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/organizations/{id}/officers": {
+            "get": {
+                "description": "Get officers within an organization",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Organizations"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_organization.GetOfficersResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
         "/organizations/{id}/siblings-and-ancestral-siblings": {
             "get": {
                 "description": "Get siblings and ancestral siblings of an organization",
@@ -216,7 +294,305 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsDto"
+                            "$ref": "#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/placements": {
+            "post": {
+                "description": "Post a new placement",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Placements"
+                ],
+                "parameters": [
+                    {
+                        "description": "Placement Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.PostRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.PostResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/placements/{id}": {
+            "get": {
+                "description": "Get a placement",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Placements"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Placement ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.GetResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a placement",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Placements"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Placement ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.DeleteResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Patch a placement",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Placements"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Placement ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Placement Patch Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.PatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_placement.PatchResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "post": {
+                "description": "Post a new role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "parameters": [
+                    {
+                        "description": "Role Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.PostRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.PostResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "description": "Get a role",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.GetResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a role",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.DeleteResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Patch a role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Role Patch Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.PatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_role.PatchResponseDto"
                         }
                     },
                     "400": {
@@ -237,6 +613,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mrexmelle_connect-orgs_internal_placement.Entity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "role_id": {
                     "type": "string"
                 }
             }
@@ -266,7 +659,7 @@ const docTemplate = `{
         "internal_organization.Entity": {
             "type": "object",
             "properties": {
-                "emailAddress": {
+                "email_address": {
                     "type": "string"
                 },
                 "hierarchy": {
@@ -278,10 +671,10 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "privateSlackChannel": {
+                "private_slack_channel": {
                     "type": "string"
                 },
-                "publicSlackChannel": {
+                "public_slack_channel": {
                     "type": "string"
                 }
             }
@@ -314,6 +707,20 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_organization.GetOfficersResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_placement.Entity"
+                    }
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
         "internal_organization.GetResponseDto": {
             "type": "object",
             "properties": {
@@ -325,7 +732,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_organization.GetSiblingsAndAncestralSiblingsDto": {
+        "internal_organization.GetSiblingsAndAncestralSiblingsResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
@@ -336,10 +743,27 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_organization.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_organization.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
         "internal_organization.PostRequestDto": {
             "type": "object",
             "properties": {
-                "emailAddress": {
+                "email_address": {
                     "type": "string"
                 },
                 "hierarchy": {
@@ -351,10 +775,10 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "privateSlackChannel": {
+                "private_slack_channel": {
                     "type": "string"
                 },
-                "publicSlackChannel": {
+                "public_slack_channel": {
                     "type": "string"
                 }
             }
@@ -364,6 +788,165 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/internal_organization.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_placement.DeleteResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_placement.Entity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_placement.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_placement.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_placement.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_placement.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_placement.PostRequestDto": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "organization_id": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_placement.PostResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_placement.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_role.DeleteResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_role.Entity": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "max_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rank": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_role.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_role.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_role.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_role.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_role.PostRequestDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "max_count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rank": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_role.PostResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_role.Entity"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"

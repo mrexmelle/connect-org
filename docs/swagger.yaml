@@ -7,6 +7,17 @@ definitions:
       message:
         type: string
     type: object
+  github_com_mrexmelle_connect-orgs_internal_placement.Entity:
+    properties:
+      ehid:
+        type: string
+      id:
+        type: string
+      organization_id:
+        type: string
+      role_id:
+        type: string
+    type: object
   github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity:
     properties:
       children:
@@ -23,7 +34,7 @@ definitions:
     type: object
   internal_organization.Entity:
     properties:
-      emailAddress:
+      email_address:
         type: string
       hierarchy:
         type: string
@@ -31,9 +42,9 @@ definitions:
         type: string
       name:
         type: string
-      privateSlackChannel:
+      private_slack_channel:
         type: string
-      publicSlackChannel:
+      public_slack_channel:
         type: string
     type: object
   internal_organization.GetChildrenResponseDto:
@@ -54,6 +65,15 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
+  internal_organization.GetOfficersResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_placement.Entity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
   internal_organization.GetResponseDto:
     properties:
       data:
@@ -61,16 +81,27 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
-  internal_organization.GetSiblingsAndAncestralSiblingsDto:
+  internal_organization.GetSiblingsAndAncestralSiblingsResponseDto:
     properties:
       data:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
+  internal_organization.PatchRequestDto:
+    properties:
+      fields:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_organization.PatchResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
   internal_organization.PostRequestDto:
     properties:
-      emailAddress:
+      email_address:
         type: string
       hierarchy:
         type: string
@@ -78,15 +109,117 @@ definitions:
         type: string
       name:
         type: string
-      privateSlackChannel:
+      private_slack_channel:
         type: string
-      publicSlackChannel:
+      public_slack_channel:
         type: string
     type: object
   internal_organization.PostResponseDto:
     properties:
       data:
         $ref: '#/definitions/internal_organization.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_placement.DeleteResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_placement.Entity:
+    properties:
+      ehid:
+        type: string
+      id:
+        type: string
+      organization_id:
+        type: string
+      role_id:
+        type: string
+    type: object
+  internal_placement.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_placement.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_placement.PatchRequestDto:
+    properties:
+      fields:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_placement.PatchResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_placement.PostRequestDto:
+    properties:
+      ehid:
+        type: string
+      organization_id:
+        type: string
+      role_id:
+        type: string
+    type: object
+  internal_placement.PostResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_placement.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_role.DeleteResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_role.Entity:
+    properties:
+      id:
+        type: string
+      max_count:
+        type: integer
+      name:
+        type: string
+      rank:
+        type: integer
+    type: object
+  internal_role.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_role.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_role.PatchRequestDto:
+    properties:
+      fields:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_role.PatchResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
+    type: object
+  internal_role.PostRequestDto:
+    properties:
+      id:
+        type: string
+      max_count:
+        type: integer
+      name:
+        type: string
+      rank:
+        type: integer
+    type: object
+  internal_role.PostResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_role.Entity'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError'
     type: object
@@ -172,6 +305,35 @@ paths:
           description: InternalServerError
       tags:
       - Organizations
+    patch:
+      consumes:
+      - application/json
+      description: Patch an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Organization Patch Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_organization.PatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.PatchResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
   /organizations/{id}/children:
     get:
       description: Get children of an organization
@@ -216,6 +378,28 @@ paths:
           description: InternalServerError
       tags:
       - Organizations
+  /organizations/{id}/officers:
+    get:
+      description: Get officers within an organization
+      parameters:
+      - description: Organization ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_organization.GetOfficersResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Organizations
   /organizations/{id}/siblings-and-ancestral-siblings:
     get:
       description: Get siblings and ancestral siblings of an organization
@@ -231,11 +415,205 @@ paths:
         "200":
           description: Success Response
           schema:
-            $ref: '#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsDto'
+            $ref: '#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsResponseDto'
         "400":
           description: BadRequest
         "500":
           description: InternalServerError
       tags:
       - Organizations
+  /placements:
+    post:
+      consumes:
+      - application/json
+      description: Post a new placement
+      parameters:
+      - description: Placement Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_placement.PostRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_placement.PostResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Placements
+  /placements/{id}:
+    delete:
+      description: Delete a placement
+      parameters:
+      - description: Placement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_placement.DeleteResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Placements
+    get:
+      description: Get a placement
+      parameters:
+      - description: Placement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_placement.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Placements
+    patch:
+      consumes:
+      - application/json
+      description: Patch a placement
+      parameters:
+      - description: Placement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Placement Patch Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_placement.PatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_placement.PatchResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Placements
+  /roles:
+    post:
+      consumes:
+      - application/json
+      description: Post a new role
+      parameters:
+      - description: Role Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_role.PostRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_role.PostResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Roles
+  /roles/{id}:
+    delete:
+      description: Delete a role
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_role.DeleteResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Roles
+    get:
+      description: Get a role
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_role.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Roles
+    patch:
+      consumes:
+      - application/json
+      description: Patch a role
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role Patch Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_role.PatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_role.PatchResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Roles
 swagger: "2.0"
