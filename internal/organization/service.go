@@ -43,6 +43,10 @@ func (s *Service) RetrieveById(id string) (*Entity, error) {
 	return result, nil
 }
 
+func (s *Service) UpdateById(fields map[string]interface{}, id string) error {
+	return s.OrganizationRepository.UpdateById(fields, id)
+}
+
 func (s *Service) DeleteById(id string) error {
 	err := s.OrganizationRepository.DeleteById(id)
 	return err

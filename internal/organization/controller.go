@@ -9,18 +9,25 @@ import (
 	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithdata"
 	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithoutdata"
 	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-orgs/internal/placement"
 	"github.com/mrexmelle/connect-orgs/internal/tree"
 )
 
 type Controller struct {
 	ConfigService       *config.Service
 	OrganizationService *Service
+	PlacementService    *placement.Service
 }
 
-func NewController(cfg *config.Service, svc *Service) *Controller {
+func NewController(
+	cfg *config.Service,
+	svc *Service,
+	ps *placement.Service,
+) *Controller {
 	return &Controller{
 		ConfigService:       cfg,
 		OrganizationService: svc,
+		PlacementService:    ps,
 	}
 }
 
@@ -60,6 +67,28 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.OrganizationService.Create(requestBody)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+}
+
+// Patch Organizations : HTTP endpoint to patch an organization
+// @Tags Organizations
+// @Description Patch an organization
+// @Accept json
+// @Produce json
+// @Param id path string true "Organization ID"
+// @Param data body PatchRequestDto true "Organization Patch Request"
+// @Success 200 {object} PatchResponseDto "Success Response"
+// @Failure 400 "BadRequest"
+// @Failure 500 "InternalServerError"
+// @Router /organizations/{id} [PATCH]
+func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
+	var requestBody PatchRequestDto
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	if err != nil {
+		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
+		return
+	}
+	err = c.OrganizationService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
+	dtobuilderwithoutdata.New(err).RenderTo(w)
 }
 
 // Delete Organizations : HTTP endpoint to delete organizations
@@ -105,6 +134,7 @@ func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
 	data, err := c.OrganizationService.RetrieveLineageById(
 		chi.URLParam(r, "id"),
 	)
+
 	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
 }
 
@@ -113,7 +143,7 @@ func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
 // @Description Get siblings and ancestral siblings of an organization
 // @Produce json
 // @Param id path string true "Organization ID"
-// @Success 200 {object} GetSiblingsAndAncestralSiblingsDto "Success Response"
+// @Success 200 {object} GetSiblingsAndAncestralSiblingsResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
 // @Router /organizations/{id}/siblings-and-ancestral-siblings [GET]
@@ -122,4 +152,20 @@ func (c *Controller) GetSiblingsAndAncestralSiblings(w http.ResponseWriter, r *h
 		chi.URLParam(r, "id"),
 	)
 	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
+}
+
+// Get Officers within Organizations : HTTP endpoint to get the officers within an organization
+// @Tags Organizations
+// @Description Get officers within an organization
+// @Produce json
+// @Param id path string true "Organization ID"
+// @Success 200 {object} GetOfficersResponseDto "Success Response"
+// @Failure 400 "BadRequest"
+// @Failure 500 "InternalServerError"
+// @Router /organizations/{id}/officers [GET]
+func (c *Controller) GetOfficers(w http.ResponseWriter, r *http.Request) {
+	data, err := c.PlacementService.RetrieveByOrganizationId(
+		chi.URLParam(r, "id"),
+	)
+	dtobuilderwithdata.New[[]placement.Entity](&data, err).RenderTo(w)
 }

@@ -29,6 +29,14 @@ var (
 	FieldsHierarchy = []string{
 		"hierarchy",
 	}
+
+	FieldsPatchable = []string{
+		"hierarchy",
+		"name",
+		"email_address",
+		"private_slack_channel",
+		"public_slack_channel",
+	}
 )
 
 type Query interface {
@@ -59,7 +67,8 @@ func (q *QueryImpl) performSelect(fields []string) *gorm.DB {
 }
 
 func (q *QueryImpl) SelectById(fields []string, id string) *gorm.DB {
-	return q.performSelect(fields).Where("id = ?", id)
+	return q.performSelect(fields).
+		Where("id = ?", id)
 }
 
 func (q *QueryImpl) SelectChildrenByHierarchy(fields []string, hierarchy string) *gorm.DB {
