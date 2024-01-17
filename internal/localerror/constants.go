@@ -12,6 +12,7 @@ var (
 	ErrAuthentication = errors.New("authentication_error")
 	ErrBadJson        = errors.New("bad_json")
 	ErrBadHierarchy   = errors.New("bad_hierarchy")
+	ErrAlreadyMax     = errors.New("already_max")
 )
 
 const (
@@ -28,7 +29,9 @@ var ErrorMap = map[error]CodePair{
 	gorm.ErrForeignKeyViolated: NewCodePair(http.StatusBadRequest, ErrSvcCodeForeignKeyViolated),
 	gorm.ErrRecordNotFound:     NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
 	sql.ErrNoRows:              NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
-	ErrAuthentication:          NewCodePair(http.StatusUnauthorized, ErrAuthentication.Error()),
-	ErrBadJson:                 NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
-	ErrBadHierarchy:            NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
+
+	ErrAuthentication: NewCodePair(http.StatusUnauthorized, ErrAuthentication.Error()),
+	ErrBadJson:        NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
+	ErrBadHierarchy:   NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
+	ErrAlreadyMax:     NewCodePair(http.StatusForbidden, ErrAlreadyMax.Error()),
 }
