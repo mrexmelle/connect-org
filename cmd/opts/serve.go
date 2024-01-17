@@ -9,6 +9,8 @@ import (
 	"github.com/mrexmelle/connect-orgs/internal/config"
 	"github.com/mrexmelle/connect-orgs/internal/localerror"
 	"github.com/mrexmelle/connect-orgs/internal/organization"
+	"github.com/mrexmelle/connect-orgs/internal/placement"
+	"github.com/mrexmelle/connect-orgs/internal/role"
 	"github.com/spf13/cobra"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -24,16 +26,24 @@ func Serve(cmd *cobra.Command, args []string) {
 
 	container.Provide(config.NewRepository)
 	container.Provide(organization.NewRepository)
+	container.Provide(role.NewRepository)
+	container.Provide(placement.NewRepository)
 
 	container.Provide(config.NewService)
 	container.Provide(localerror.NewService)
 	container.Provide(organization.NewService)
+	container.Provide(role.NewService)
+	container.Provide(placement.NewService)
 
 	container.Provide(organization.NewController)
+	container.Provide(role.NewController)
+	container.Provide(placement.NewController)
 
 	process := func(
 		configService *config.Service,
 		organizationController *organization.Controller,
+		roleController *role.Controller,
+		placementController *placement.Controller,
 	) {
 		r := chi.NewRouter()
 
@@ -57,11 +67,27 @@ func Serve(cmd *cobra.Command, args []string) {
 		r.Route("/organizations", func(r chi.Router) {
 			r.Post("/", organizationController.Post)
 			r.Get("/{id}", organizationController.Get)
+			r.Patch("/{id}", organizationController.Patch)
 			r.Delete("/{id}", organizationController.Delete)
 			r.Get("/{id}/children", organizationController.GetChildren)
 			r.Get("/{id}/lineage", organizationController.GetLineage)
+			r.Get("/{id}/officers", organizationController.GetOfficers)
 			r.Get("/{id}/siblings-and-ancestral-siblings", organizationController.
 				GetSiblingsAndAncestralSiblings)
+		})
+
+		r.Route("/roles", func(r chi.Router) {
+			r.Post("/", roleController.Post)
+			r.Get("/{id}", roleController.Get)
+			r.Patch("/{id}", roleController.Patch)
+			r.Delete("/{id}", roleController.Delete)
+		})
+
+		r.Route("/placements", func(r chi.Router) {
+			r.Post("/", placementController.Post)
+			r.Get("/{id}", placementController.Get)
+			r.Patch("/{id}", placementController.Patch)
+			r.Delete("/{id}", placementController.Delete)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
