@@ -18,6 +18,10 @@ var (
 		"max_count",
 	}
 
+	FieldsMaxCount = []string{
+		"max_count",
+	}
+
 	FieldsPatchable = []string{
 		"name",
 		"rank",

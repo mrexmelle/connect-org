@@ -12,6 +12,7 @@ type Repository interface {
 	FindById(id string) (*Entity, error)
 	UpdateById(fields map[string]interface{}, ehid string) error
 	DeleteById(id string) error
+	CountById(id string) int64
 }
 
 type RepositoryImpl struct {
@@ -104,4 +105,13 @@ func (r *RepositoryImpl) DeleteById(id string) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *RepositoryImpl) CountById(id string) int64 {
+	var count int64
+	result := r.Query.SelectById(FieldsMaxCount, id).Scan(&count)
+	if result.Error != nil {
+		return 0
+	}
+	return count
 }
