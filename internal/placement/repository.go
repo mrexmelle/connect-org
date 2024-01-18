@@ -13,6 +13,7 @@ type Repository interface {
 	FindByOrganizationId(organizationId string) ([]Entity, error)
 	UpdateById(fields map[string]interface{}, ehid string) error
 	DeleteById(id string) error
+	FindByOrganizationIdAndRoleId(organizationId string, roleId string) ([]Entity, error)
 }
 
 type RepositoryImpl struct {
@@ -57,12 +58,12 @@ func (r *RepositoryImpl) FindById(id string) (*Entity, error) {
 }
 
 func (r *RepositoryImpl) FindByOrganizationId(organizationId string) ([]Entity, error) {
-	orgroles := []Entity{}
-	result := r.Query.SelectByOrganizationId(FieldsAll, organizationId).Find(&orgroles)
+	placements := []Entity{}
+	result := r.Query.SelectByOrganizationId(FieldsAll, organizationId).Find(&placements)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return orgroles, nil
+	return placements, nil
 }
 
 func (r *RepositoryImpl) UpdateById(
@@ -114,4 +115,20 @@ func (r *RepositoryImpl) DeleteById(id string) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *RepositoryImpl) FindByOrganizationIdAndRoleId(
+	organizationId string,
+	roleId string,
+) ([]Entity, error) {
+	placements := []Entity{}
+	result := r.Query.SelectByOrganizationIdAndRoleId(
+		FieldsAll,
+		organizationId,
+		roleId,
+	).Find(&placements)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return placements, nil
 }

@@ -12,14 +12,14 @@ import (
 )
 
 type Controller struct {
-	ConfigService  *config.Service
-	OrgRoleService *Service
+	ConfigService    *config.Service
+	PlacementService *Service
 }
 
 func NewController(cfg *config.Service, svc *Service) *Controller {
 	return &Controller{
-		ConfigService:  cfg,
-		OrgRoleService: svc,
+		ConfigService:    cfg,
+		PlacementService: svc,
 	}
 }
 
@@ -33,7 +33,7 @@ func NewController(cfg *config.Service, svc *Service) *Controller {
 // @Failure 500 "InternalServerError"
 // @Router /placements/{id} [GET]
 func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
-	data, err := c.OrgRoleService.RetrieveById(
+	data, err := c.PlacementService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
@@ -57,7 +57,7 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := c.OrgRoleService.Create(requestBody)
+	data, err := c.PlacementService.Create(requestBody)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
@@ -79,7 +79,7 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
 		return
 	}
-	err = c.OrgRoleService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
+	err = c.PlacementService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }
 
@@ -93,6 +93,6 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 "InternalServerError"
 // @Router /placements/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
-	err := c.OrgRoleService.DeleteById(chi.URLParam(r, "id"))
+	err := c.PlacementService.DeleteById(chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }
