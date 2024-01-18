@@ -24,8 +24,6 @@ var (
 		"ehid",
 	}
 
-	FieldsNone = []string{}
-
 	FieldsPatchable = []string{
 		"organization_id",
 		"role_id",
