@@ -24,6 +24,8 @@ var (
 		"ehid",
 	}
 
+	FieldsNone = []string{}
+
 	FieldsPatchable = []string{
 		"organization_id",
 		"role_id",
@@ -34,6 +36,11 @@ var (
 type Query interface {
 	SelectById(fields []string, id string) *gorm.DB
 	SelectByOrganizationId(fields []string, organization_id string) *gorm.DB
+	SelectByOrganizationIdAndRoleId(
+		fields []string,
+		organizationId string,
+		roleId string,
+	) *gorm.DB
 }
 
 type QueryImpl struct {
@@ -66,4 +73,14 @@ func (q *QueryImpl) SelectByOrganizationId(
 ) *gorm.DB {
 	return q.performSelect(fields).
 		Where("organization_id = ?", organization_id)
+}
+
+func (q *QueryImpl) SelectByOrganizationIdAndRoleId(
+	fields []string,
+	organizationId string,
+	roleId string,
+) *gorm.DB {
+	return q.performSelect(fields).
+		Where("organization_id = ?", organizationId).
+		Where("role_id = ?", roleId)
 }
