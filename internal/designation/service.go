@@ -1,9 +1,9 @@
-package placement
+package designation
 
 import (
-	"github.com/mrexmelle/connect-orgs/internal/config"
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
-	"github.com/mrexmelle/connect-orgs/internal/role"
+	"github.com/mrexmelle/connect-org/internal/config"
+	"github.com/mrexmelle/connect-org/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/role"
 )
 
 type Service struct {
@@ -25,8 +25,8 @@ func NewService(
 }
 
 func (s *Service) Create(req PostRequestDto) (*Entity, error) {
-	existingPlacements, err := s.PlacementRepository.FindByOrganizationIdAndRoleId(
-		req.OrganizationId,
+	existingPlacements, err := s.PlacementRepository.FindByNodeIdAndRoleId(
+		req.NodeId,
 		req.RoleId,
 	)
 	if err != nil {
@@ -34,14 +34,14 @@ func (s *Service) Create(req PostRequestDto) (*Entity, error) {
 	}
 
 	newEntity := &Entity{
-		OrganizationId: req.OrganizationId,
-		RoleId:         req.RoleId,
-		Ehid:           req.Ehid,
+		NodeId: req.NodeId,
+		RoleId: req.RoleId,
+		Ehid:   req.Ehid,
 	}
 
 	for i := range existingPlacements {
 		if existingPlacements[i].Ehid == req.Ehid &&
-			existingPlacements[i].OrganizationId == req.OrganizationId &&
+			existingPlacements[i].NodeId == req.NodeId &&
 			existingPlacements[i].RoleId == req.RoleId {
 			newEntity.Id = existingPlacements[i].Id
 			return newEntity, nil
@@ -68,19 +68,16 @@ func (s *Service) RetrieveById(id string) (*Entity, error) {
 	return result, nil
 }
 
-func (s *Service) RetrieveByOrganizationId(organizationId string) ([]Entity, error) {
-	result, err := s.PlacementRepository.FindByOrganizationId(organizationId)
+func (s *Service) RetrieveByNodeId(nodeId string) ([]Entity, error) {
+	result, err := s.PlacementRepository.FindByNodeId(nodeId)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (s *Service) RetrieveByOrganizationIdAndRoleId(
-	organizationId string,
-	roleId string,
-) ([]Entity, error) {
-	result, err := s.PlacementRepository.FindByOrganizationIdAndRoleId(organizationId, roleId)
+func (s *Service) RetrieveByNodeIdAndRoleId(nodeId string, roleId string) ([]Entity, error) {
+	result, err := s.PlacementRepository.FindByNodeIdAndRoleId(nodeId, roleId)
 	if err != nil {
 		return nil, err
 	}

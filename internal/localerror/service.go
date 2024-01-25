@@ -3,7 +3,7 @@ package localerror
 import (
 	"net/http"
 
-	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-org/internal/config"
 )
 
 type Service struct {

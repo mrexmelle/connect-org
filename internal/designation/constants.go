@@ -1,4 +1,4 @@
-package placement
+package designation
 
 var (
 	MaxCountUnlimited = -1

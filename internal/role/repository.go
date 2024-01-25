@@ -3,7 +3,7 @@ package role
 import (
 	"time"
 
-	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-org/internal/config"
 	"gorm.io/gorm"
 )
 

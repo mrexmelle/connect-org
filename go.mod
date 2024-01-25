@@ -1,4 +1,4 @@
-module github.com/mrexmelle/connect-orgs
+module github.com/mrexmelle/connect-org
 
 go 1.21.0
 

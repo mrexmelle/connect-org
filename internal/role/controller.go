@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/mrexmelle/connect-orgs/internal/config"
-	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithoutdata"
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/config"
+	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Controller struct {

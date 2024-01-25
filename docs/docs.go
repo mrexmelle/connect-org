@@ -21,9 +21,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/organizations": {
+        "/designations": {
             "post": {
-                "description": "Post a new organization",
+                "description": "Post a new designations",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,16 +31,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Organizations"
+                    "Designations"
                 ],
                 "parameters": [
                     {
-                        "description": "Organization Request",
+                        "description": "Designation Request",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.PostRequestDto"
+                            "$ref": "#/definitions/internal_designation.PostRequestDto"
                         }
                     }
                 ],
@@ -48,7 +48,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.PostResponseDto"
+                            "$ref": "#/definitions/internal_designation.PostResponseDto"
                         }
                     },
                     "400": {
@@ -60,19 +60,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/organizations/{id}": {
+        "/designations/{id}": {
             "get": {
-                "description": "Get an organization",
+                "description": "Get a designation",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Organizations"
+                    "Designations"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization ID",
+                        "description": "Designation ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -82,7 +82,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.GetResponseDto"
+                            "$ref": "#/definitions/internal_designation.GetResponseDto"
                         }
                     },
                     "400": {
@@ -94,17 +94,17 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete an organization",
+                "description": "Delete a designation",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Organizations"
+                    "Designations"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization ID",
+                        "description": "Designation ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -114,7 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.DeleteResponseDto"
+                            "$ref": "#/definitions/internal_designation.DeleteResponseDto"
                         }
                     },
                     "400": {
@@ -126,7 +126,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Patch an organization",
+                "description": "Patch a designation",
                 "consumes": [
                     "application/json"
                 ],
@@ -134,23 +134,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Organizations"
+                    "Designations"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization ID",
+                        "description": "Designation ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Organization Patch Request",
+                        "description": "Designation Patch Request",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.PatchRequestDto"
+                            "$ref": "#/definitions/internal_designation.PatchRequestDto"
                         }
                     }
                 ],
@@ -158,7 +158,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_organization.PatchResponseDto"
+                            "$ref": "#/definitions/internal_designation.PatchResponseDto"
                         }
                     },
                     "400": {
@@ -170,145 +170,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/organizations/{id}/children": {
-            "get": {
-                "description": "Get children of an organization",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Organizations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_organization.GetChildrenResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
-        "/organizations/{id}/lineage": {
-            "get": {
-                "description": "Get lineage of an organization",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Organizations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_organization.GetLineageResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
-        "/organizations/{id}/officers": {
-            "get": {
-                "description": "Get officers within an organization",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Organizations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_organization.GetOfficersResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
-        "/organizations/{id}/siblings-and-ancestral-siblings": {
-            "get": {
-                "description": "Get siblings and ancestral siblings of an organization",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Organizations"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_organization.GetSiblingsAndAncestralSiblingsResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
-        "/placements": {
+        "/nodes": {
             "post": {
-                "description": "Post a new placement",
+                "description": "Post a new node",
                 "consumes": [
                     "application/json"
                 ],
@@ -316,16 +180,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Placements"
+                    "Nodes"
                 ],
                 "parameters": [
                     {
-                        "description": "Placement Request",
+                        "description": "Node Request",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.PostRequestDto"
+                            "$ref": "#/definitions/internal_node.PostRequestDto"
                         }
                     }
                 ],
@@ -333,7 +197,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.PostResponseDto"
+                            "$ref": "#/definitions/internal_node.PostResponseDto"
                         }
                     },
                     "400": {
@@ -345,19 +209,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/placements/{id}": {
+        "/nodes/{id}": {
             "get": {
-                "description": "Get a placement",
+                "description": "Get a node",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Placements"
+                    "Nodes"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Placement ID",
+                        "description": "Node ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -367,7 +231,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.GetResponseDto"
+                            "$ref": "#/definitions/internal_node.GetResponseDto"
                         }
                     },
                     "400": {
@@ -379,17 +243,17 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a placement",
+                "description": "Delete a node",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Placements"
+                    "Nodes"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Placement ID",
+                        "description": "Node ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -399,7 +263,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.DeleteResponseDto"
+                            "$ref": "#/definitions/internal_node.DeleteResponseDto"
                         }
                     },
                     "400": {
@@ -411,7 +275,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Patch a placement",
+                "description": "Patch a node",
                 "consumes": [
                     "application/json"
                 ],
@@ -419,23 +283,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Placements"
+                    "Nodes"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Placement ID",
+                        "description": "Node ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Placement Patch Request",
+                        "description": "Node Patch Request",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.PatchRequestDto"
+                            "$ref": "#/definitions/internal_node.PatchRequestDto"
                         }
                     }
                 ],
@@ -443,7 +307,143 @@ const docTemplate = `{
                     "200": {
                         "description": "Success Response",
                         "schema": {
-                            "$ref": "#/definitions/internal_placement.PatchResponseDto"
+                            "$ref": "#/definitions/internal_node.PatchResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/nodes/{id}/children": {
+            "get": {
+                "description": "Get children of a node",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nodes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_node.GetChildrenResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/nodes/{id}/lineage": {
+            "get": {
+                "description": "Get lineage of a node",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nodes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_node.GetLineageResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/nodes/{id}/lineage-siblings": {
+            "get": {
+                "description": "Get siblings and ancestral siblings of a node",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nodes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_node.GetLineagelSiblingsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/nodes/{id}/officers": {
+            "get": {
+                "description": "Get officers within a node",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nodes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_node.GetOfficersResponseDto"
                         }
                     },
                     "400": {
@@ -606,7 +606,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_mrexmelle_connect-orgs_internal_dto.ServiceError": {
+        "github_com_mrexmelle_connect-org_internal_designation.Entity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mrexmelle_connect-org_internal_dto.ServiceError": {
             "type": "object",
             "properties": {
                 "code": {
@@ -617,46 +634,107 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_mrexmelle_connect-orgs_internal_placement.Entity": {
-            "type": "object",
-            "properties": {
-                "ehid": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity": {
+        "github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity"
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity"
                     }
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_organization.Entity"
+                    "$ref": "#/definitions/internal_node.Entity"
                 }
             }
         },
-        "internal_organization.DeleteResponseDto": {
+        "internal_designation.DeleteResponseDto": {
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
-        "internal_organization.Entity": {
+        "internal_designation.Entity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_designation.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_designation.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_designation.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_designation.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_designation.PostRequestDto": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_designation.PostResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_designation.Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_node.DeleteResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_node.Entity": {
             "type": "object",
             "properties": {
                 "email_address": {
@@ -670,80 +748,71 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "private_slack_channel": {
-                    "type": "string"
-                },
-                "public_slack_channel": {
-                    "type": "string"
                 }
             }
         },
-        "internal_organization.GetChildrenResponseDto": {
+        "internal_node.GetChildrenResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_organization.Entity"
+                        "$ref": "#/definitions/internal_node.Entity"
                     }
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
-        "internal_organization.GetLineageResponseDto": {
+        "internal_node.GetLineageResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_node.GetLineagelSiblingsResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_node.GetOfficersResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_organization.Entity"
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_designation.Entity"
                     }
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
-        "internal_organization.GetOfficersResponseDto": {
+        "internal_node.GetResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_placement.Entity"
-                    }
+                    "$ref": "#/definitions/internal_node.Entity"
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
-        "internal_organization.GetResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/internal_organization.Entity"
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_organization.GetSiblingsAndAncestralSiblingsResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_tree.Node-internal_organization_Entity"
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_organization.PatchRequestDto": {
+        "internal_node.PatchRequestDto": {
             "type": "object",
             "properties": {
                 "fields": {
@@ -752,15 +821,15 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_organization.PatchResponseDto": {
+        "internal_node.PatchResponseDto": {
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
-        "internal_organization.PostRequestDto": {
+        "internal_node.PostRequestDto": {
             "type": "object",
             "properties": {
                 "email_address": {
@@ -774,101 +843,17 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "private_slack_channel": {
-                    "type": "string"
-                },
-                "public_slack_channel": {
-                    "type": "string"
                 }
             }
         },
-        "internal_organization.PostResponseDto": {
+        "internal_node.PostResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/internal_organization.Entity"
+                    "$ref": "#/definitions/internal_node.Entity"
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_placement.DeleteResponseDto": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_placement.Entity": {
-            "type": "object",
-            "properties": {
-                "ehid": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_placement.GetResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/internal_placement.Entity"
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_placement.PatchRequestDto": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "internal_placement.PatchResponseDto": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
-                }
-            }
-        },
-        "internal_placement.PostRequestDto": {
-            "type": "object",
-            "properties": {
-                "ehid": {
-                    "type": "string"
-                },
-                "organization_id": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "internal_placement.PostResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/internal_placement.Entity"
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
@@ -876,7 +861,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
@@ -904,7 +889,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/internal_role.Entity"
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
@@ -921,7 +906,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         },
@@ -949,7 +934,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/internal_role.Entity"
                 },
                 "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-orgs_internal_dto.ServiceError"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
                 }
             }
         }

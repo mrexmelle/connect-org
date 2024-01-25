@@ -1,54 +1,54 @@
-package placement
+package designation
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/mrexmelle/connect-orgs/internal/config"
-	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-orgs/internal/dto/dtobuilderwithoutdata"
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/config"
+	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Controller struct {
-	ConfigService    *config.Service
-	PlacementService *Service
+	ConfigService     *config.Service
+	AssignmentService *Service
 }
 
 func NewController(cfg *config.Service, svc *Service) *Controller {
 	return &Controller{
-		ConfigService:    cfg,
-		PlacementService: svc,
+		ConfigService:     cfg,
+		AssignmentService: svc,
 	}
 }
 
-// Get Placements : HTTP endpoint to get placements
-// @Tags Placements
-// @Description Get a placement
+// Get Designations : HTTP endpoint to get designations
+// @Tags Designations
+// @Description Get a designation
 // @Produce json
-// @Param id path string true "Placement ID"
+// @Param id path string true "Designation ID"
 // @Success 200 {object} GetResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
-// @Router /placements/{id} [GET]
+// @Router /designations/{id} [GET]
 func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
-	data, err := c.PlacementService.RetrieveById(
+	data, err := c.AssignmentService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
-// Post Placements : HTTP endpoint to post new placements
-// @Tags Placements
-// @Description Post a new placement
+// Post Designations : HTTP endpoint to post new designations
+// @Tags Designations
+// @Description Post a new designations
 // @Accept json
 // @Produce json
-// @Param data body PostRequestDto true "Placement Request"
+// @Param data body PostRequestDto true "Designation Request"
 // @Success 200 {object} PostResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
-// @Router /placements [POST]
+// @Router /designations [POST]
 func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
@@ -57,21 +57,21 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := c.PlacementService.Create(requestBody)
+	data, err := c.AssignmentService.Create(requestBody)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
-// Patch Placements : HTTP endpoint to patch a placement
-// @Tags Placements
-// @Description Patch a placement
+// Patch Designations : HTTP endpoint to patch a designation
+// @Tags Designations
+// @Description Patch a designation
 // @Accept json
 // @Produce json
-// @Param id path string true "Placement ID"
-// @Param data body PatchRequestDto true "Placement Patch Request"
+// @Param id path string true "Designation ID"
+// @Param data body PatchRequestDto true "Designation Patch Request"
 // @Success 200 {object} PatchResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
-// @Router /placements/{id} [PATCH]
+// @Router /designations/{id} [PATCH]
 func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 	var requestBody PatchRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
@@ -79,20 +79,20 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
 		return
 	}
-	err = c.PlacementService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
+	err = c.AssignmentService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }
 
-// Delete Placements : HTTP endpoint to delete placements
-// @Tags Placements
-// @Description Delete a placement
+// Delete Designations : HTTP endpoint to delete designations
+// @Tags Designations
+// @Description Delete a designation
 // @Produce json
-// @Param id path string true "Placement ID"
+// @Param id path string true "Designation ID"
 // @Success 200 {object} DeleteResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
-// @Router /placements/{id} [DELETE]
+// @Router /designations/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
-	err := c.PlacementService.DeleteById(chi.URLParam(r, "id"))
+	err := c.AssignmentService.DeleteById(chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }

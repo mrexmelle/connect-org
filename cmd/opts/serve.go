@@ -6,11 +6,11 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/mrexmelle/connect-orgs/internal/config"
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
-	"github.com/mrexmelle/connect-orgs/internal/organization"
-	"github.com/mrexmelle/connect-orgs/internal/placement"
-	"github.com/mrexmelle/connect-orgs/internal/role"
+	"github.com/mrexmelle/connect-org/internal/config"
+	"github.com/mrexmelle/connect-org/internal/designation"
+	"github.com/mrexmelle/connect-org/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/node"
+	"github.com/mrexmelle/connect-org/internal/role"
 	"github.com/spf13/cobra"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -25,25 +25,25 @@ func Serve(cmd *cobra.Command, args []string) {
 	container := dig.New()
 
 	container.Provide(config.NewRepository)
-	container.Provide(organization.NewRepository)
+	container.Provide(designation.NewRepository)
 	container.Provide(role.NewRepository)
-	container.Provide(placement.NewRepository)
+	container.Provide(node.NewRepository)
 
 	container.Provide(config.NewService)
 	container.Provide(localerror.NewService)
-	container.Provide(organization.NewService)
+	container.Provide(designation.NewService)
 	container.Provide(role.NewService)
-	container.Provide(placement.NewService)
+	container.Provide(node.NewService)
 
-	container.Provide(organization.NewController)
+	container.Provide(designation.NewController)
 	container.Provide(role.NewController)
-	container.Provide(placement.NewController)
+	container.Provide(node.NewController)
 
 	process := func(
 		configService *config.Service,
-		organizationController *organization.Controller,
+		designationController *designation.Controller,
 		roleController *role.Controller,
-		placementController *placement.Controller,
+		nodeController *node.Controller,
 	) {
 		r := chi.NewRouter()
 
@@ -64,16 +64,15 @@ func Serve(cmd *cobra.Command, args []string) {
 			))
 		}
 
-		r.Route("/organizations", func(r chi.Router) {
-			r.Post("/", organizationController.Post)
-			r.Get("/{id}", organizationController.Get)
-			r.Patch("/{id}", organizationController.Patch)
-			r.Delete("/{id}", organizationController.Delete)
-			r.Get("/{id}/children", organizationController.GetChildren)
-			r.Get("/{id}/lineage", organizationController.GetLineage)
-			r.Get("/{id}/officers", organizationController.GetOfficers)
-			r.Get("/{id}/siblings-and-ancestral-siblings", organizationController.
-				GetSiblingsAndAncestralSiblings)
+		r.Route("/nodes", func(r chi.Router) {
+			r.Post("/", nodeController.Post)
+			r.Get("/{id}", nodeController.Get)
+			r.Patch("/{id}", nodeController.Patch)
+			r.Delete("/{id}", nodeController.Delete)
+			r.Get("/{id}/children", nodeController.GetChildren)
+			r.Get("/{id}/lineage", nodeController.GetLineage)
+			r.Get("/{id}/officers", nodeController.GetOfficers)
+			r.Get("/{id}/lineage-siblings", nodeController.GetLineageSiblings)
 		})
 
 		r.Route("/roles", func(r chi.Router) {
@@ -83,11 +82,11 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Delete("/{id}", roleController.Delete)
 		})
 
-		r.Route("/placements", func(r chi.Router) {
-			r.Post("/", placementController.Post)
-			r.Get("/{id}", placementController.Get)
-			r.Patch("/{id}", placementController.Patch)
-			r.Delete("/{id}", placementController.Delete)
+		r.Route("/designations", func(r chi.Router) {
+			r.Post("/", designationController.Post)
+			r.Get("/{id}", designationController.Get)
+			r.Patch("/{id}", designationController.Patch)
+			r.Delete("/{id}", designationController.Delete)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
@@ -104,6 +103,6 @@ func Serve(cmd *cobra.Command, args []string) {
 
 var ServeCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start connect-orgs server",
+	Short: "Start connect-org server",
 	Run:   Serve,
 }

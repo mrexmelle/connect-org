@@ -8,10 +8,10 @@ COPY internal ./internal
 COPY config /etc/conf
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN swag init -g ./cmd/main.go
-RUN go build -o ./connect-orgs ./cmd/main.go
+RUN go build -o ./connect-org ./cmd/main.go
 RUN rm -rf ./cmd ./internal go
 
 EXPOSE 8080
-CMD ["/app/connect-orgs", "serve"]
+CMD ["/app/connect-org", "serve"]
 
-LABEL org.opencontainers.image.source https://github.com/mrexmelle/connect-orgs
+LABEL org.opencontainers.image.source https://github.com/mrexmelle/connect-org

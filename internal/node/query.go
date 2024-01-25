@@ -1,10 +1,10 @@
-package organization
+package node
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 	"gorm.io/gorm"
 )
 
@@ -14,16 +14,12 @@ var (
 		"hierarchy",
 		"name",
 		"email_address",
-		"private_slack_channel",
-		"public_slack_channel",
 	}
 
 	FieldsAllExceptId = []string{
 		"hierarchy",
 		"name",
 		"email_address",
-		"private_slack_channel",
-		"public_slack_channel",
 	}
 
 	FieldsHierarchy = []string{
@@ -34,8 +30,6 @@ var (
 		"hierarchy",
 		"name",
 		"email_address",
-		"private_slack_channel",
-		"public_slack_channel",
 	}
 )
 
@@ -43,7 +37,7 @@ type Query interface {
 	SelectById(fields []string, id string) *gorm.DB
 	SelectChildrenByHierarchy(fields []string, hierarchy string) *gorm.DB
 	SelectLineageByHierarchy(fields []string, hierarchy string) (*gorm.DB, error)
-	SelectSiblingsAndAncestralSiblingsByHierarchy(fields []string, hierarchy string) (*gorm.DB, error)
+	SelectLineageSiblingsByHierarchy(fields []string, hierarchy string) (*gorm.DB, error)
 	SelectChildrenById(fields []string, id string) *gorm.DB
 }
 
@@ -92,7 +86,7 @@ func (q *QueryImpl) SelectLineageByHierarchy(fields []string, hierarchy string) 
 	return query, nil
 }
 
-func (q *QueryImpl) SelectSiblingsAndAncestralSiblingsByHierarchy(
+func (q *QueryImpl) SelectLineageSiblingsByHierarchy(
 	fields []string,
 	hierarchy string,
 ) (*gorm.DB, error) {

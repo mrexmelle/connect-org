@@ -1,9 +1,9 @@
-package organization
+package node
 
 import (
 	"time"
 
-	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-org/internal/config"
 	"gorm.io/gorm"
 )
 
@@ -14,10 +14,10 @@ type Repository interface {
 	DeleteById(id string) error
 	FindChildrenByHierarchy(hierarchy string) ([]Entity, error)
 	FindLineageByHierarchy(hierarchy string) ([]Entity, error)
-	FindSiblingsAndAncestralSiblingsByHierarchy(hierarchy string) ([]Entity, error)
+	FindLineageSiblingsByHierarchy(hierarchy string) ([]Entity, error)
 	FindChildrenById(id string) ([]Entity, error)
 	FindLineageById(hierarchy string) ([]Entity, error)
-	FindSiblingsAndAncestralSiblingsById(hierarchy string) ([]Entity, error)
+	FindLineageSiblingsById(hierarchy string) ([]Entity, error)
 }
 
 type RepositoryImpl struct {
@@ -29,23 +29,20 @@ type RepositoryImpl struct {
 func NewRepository(cfg *config.Service) Repository {
 	return &RepositoryImpl{
 		ConfigService: cfg,
-		TableName:     "organizations",
-		Query:         NewQuery(cfg.ReadDb, "organizations"),
+		TableName:     "nodes",
+		Query:         NewQuery(cfg.ReadDb, "nodes"),
 	}
 }
 
 func (r *RepositoryImpl) Create(req *Entity) (*Entity, error) {
 	result := r.ConfigService.WriteDb.Exec(
 		"INSERT INTO "+r.TableName+"(id, hierarchy, name, email_address, "+
-			"private_slack_channel, public_slack_channel, "+
 			"created_at, updated_at) "+
-			"VALUES(?, ?, ?, ?, ?, ?, NOW(), NOW())",
+			"VALUES(?, ?, ?, ?, NOW(), NOW())",
 		req.Id,
 		req.Hierarchy,
 		req.Name,
 		req.EmailAddress,
-		req.PrivateSlackChannel,
-		req.PublicSlackChannel,
 	)
 	if result.Error != nil {
 		return nil, result.Error
@@ -102,12 +99,10 @@ func (r *RepositoryImpl) DeleteById(id string) error {
 		Where("id = ? AND deleted_at IS NULL", id).
 		Updates(
 			map[string]interface{}{
-				"hierarchy":             id,
-				"email_address":         "",
-				"private_slack_channel": "",
-				"public_slack_channel":  "",
-				"deleted_at":            now,
-				"updated_at":            now,
+				"hierarchy":     id,
+				"email_address": "",
+				"deleted_at":    now,
+				"updated_at":    now,
 			},
 		)
 	if result.Error != nil {
@@ -141,11 +136,11 @@ func (r *RepositoryImpl) FindLineageByHierarchy(hierarchy string) ([]Entity, err
 	return orgs, nil
 }
 
-func (r *RepositoryImpl) FindSiblingsAndAncestralSiblingsByHierarchy(
+func (r *RepositoryImpl) FindLineageSiblingsByHierarchy(
 	hierarchy string,
 ) ([]Entity, error) {
 	orgs := []Entity{}
-	query, err := r.Query.SelectSiblingsAndAncestralSiblingsByHierarchy(
+	query, err := r.Query.SelectLineageSiblingsByHierarchy(
 		FieldsAll, hierarchy,
 	)
 	if err != nil {
@@ -179,11 +174,11 @@ func (r *RepositoryImpl) FindLineageById(id string) ([]Entity, error) {
 	return r.FindLineageByHierarchy(org.Hierarchy)
 }
 
-func (r *RepositoryImpl) FindSiblingsAndAncestralSiblingsById(id string) ([]Entity, error) {
+func (r *RepositoryImpl) FindLineageSiblingsById(id string) ([]Entity, error) {
 	org := Entity{}
 	result := r.Query.SelectById(FieldsHierarchy, id).First(&org)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return r.FindSiblingsAndAncestralSiblingsByHierarchy(org.Hierarchy)
+	return r.FindLineageSiblingsByHierarchy(org.Hierarchy)
 }

@@ -3,17 +3,17 @@ app:
     read:
       host: postgres
       port: 5432
-      user: orgs_r
+      user: org_r
       password: 123
-      dbname: orgs
+      dbname: org
       sslmode: disable
       timezone: Asia/Jakarta
     write:
       host: postgres
       port: 5432
-      user: orgs_w
+      user: org_w
       password: 123
-      dbname: orgs
+      dbname: org
       sslmode: disable
       timezone: Asia/Jakarta
   server:

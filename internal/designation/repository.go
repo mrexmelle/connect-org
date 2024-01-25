@@ -1,19 +1,19 @@
-package placement
+package designation
 
 import (
 	"time"
 
-	"github.com/mrexmelle/connect-orgs/internal/config"
+	"github.com/mrexmelle/connect-org/internal/config"
 	"gorm.io/gorm"
 )
 
 type Repository interface {
 	Create(req *Entity) (*Entity, error)
 	FindById(id string) (*Entity, error)
-	FindByOrganizationId(organizationId string) ([]Entity, error)
+	FindByNodeId(nodeId string) ([]Entity, error)
 	UpdateById(fields map[string]interface{}, ehid string) error
 	DeleteById(id string) error
-	FindByOrganizationIdAndRoleId(organizationId string, roleId string) ([]Entity, error)
+	FindByNodeIdAndRoleId(nodeId string, roleId string) ([]Entity, error)
 }
 
 type RepositoryImpl struct {
@@ -25,17 +25,17 @@ type RepositoryImpl struct {
 func NewRepository(cfg *config.Service) Repository {
 	return &RepositoryImpl{
 		ConfigService: cfg,
-		TableName:     "placements",
-		Query:         NewQuery(cfg.ReadDb, "placements"),
+		TableName:     "designations",
+		Query:         NewQuery(cfg.ReadDb, "designations"),
 	}
 }
 
 func (r *RepositoryImpl) Create(req *Entity) (*Entity, error) {
 	result := r.ConfigService.WriteDb.Exec(
-		"INSERT INTO "+r.TableName+"(organization_id, role_id, ehid, "+
+		"INSERT INTO "+r.TableName+"(node_id, role_id, ehid, "+
 			"created_at, updated_at) "+
 			"VALUES(?, ?, ?, NOW(), NOW())",
-		req.OrganizationId,
+		req.NodeId,
 		req.RoleId,
 		req.Ehid,
 	)
@@ -57,19 +57,16 @@ func (r *RepositoryImpl) FindById(id string) (*Entity, error) {
 	return &org, nil
 }
 
-func (r *RepositoryImpl) FindByOrganizationId(organizationId string) ([]Entity, error) {
+func (r *RepositoryImpl) FindByNodeId(nodeId string) ([]Entity, error) {
 	placements := []Entity{}
-	result := r.Query.SelectByOrganizationId(FieldsAll, organizationId).Find(&placements)
+	result := r.Query.SelectByNodeId(FieldsAll, nodeId).Find(&placements)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return placements, nil
 }
 
-func (r *RepositoryImpl) UpdateById(
-	fields map[string]interface{},
-	id string,
-) error {
+func (r *RepositoryImpl) UpdateById(fields map[string]interface{}, id string) error {
 	dbFields := map[string]interface{}{}
 
 	for i := range FieldsPatchable {
@@ -117,14 +114,14 @@ func (r *RepositoryImpl) DeleteById(id string) error {
 	return nil
 }
 
-func (r *RepositoryImpl) FindByOrganizationIdAndRoleId(
-	organizationId string,
+func (r *RepositoryImpl) FindByNodeIdAndRoleId(
+	nodeId string,
 	roleId string,
 ) ([]Entity, error) {
 	placements := []Entity{}
-	result := r.Query.SelectByOrganizationIdAndRoleId(
+	result := r.Query.SelectByNodeIdAndRoleId(
 		FieldsAll,
-		organizationId,
+		nodeId,
 		roleId,
 	).Find(&placements)
 	if result.Error != nil {
