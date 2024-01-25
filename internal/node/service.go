@@ -34,11 +34,11 @@ func (s *Service) Create(req PostRequestDto) (*Entity, error) {
 }
 
 func (s *Service) RetrieveById(id string) (*Entity, error) {
-	result, err := s.NodeRepository.FindById(id)
+	data, err := s.NodeRepository.FindById(id)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return data, nil
 }
 
 func (s *Service) UpdateById(fields map[string]interface{}, id string) error {
@@ -51,35 +51,35 @@ func (s *Service) DeleteById(id string) error {
 }
 
 func (s *Service) RetrieveChildrenById(id string) ([]Entity, error) {
-	result, err := s.NodeRepository.FindChildrenById(id)
+	data, err := s.NodeRepository.FindChildrenById(id)
 	if err != nil {
 		return []Entity{}, err
 	}
-	return result, nil
+	return data, nil
 }
 
 func (s *Service) RetrieveLineageById(id string) (*tree.Node[Entity], error) {
-	orgs, err := s.NodeRepository.FindLineageById(id)
+	data, err := s.NodeRepository.FindLineageById(id)
 	if err != nil {
 		return nil, err
 	}
 
-	orgTree := tree.New[Entity](".")
-	for i := 0; i < len(orgs); i++ {
-		orgTree.AssignEntity(orgs[i].Hierarchy, &orgs[i])
+	nodeTree := tree.New[Entity](".")
+	for i := 0; i < len(data); i++ {
+		nodeTree.AssignEntity(data[i].Hierarchy, &data[i])
 	}
-	return orgTree.Root, nil
+	return nodeTree.Root, nil
 }
 
 func (s *Service) RetrieveLineageSiblingsById(id string) (*tree.Node[Entity], error) {
-	orgs, err := s.NodeRepository.FindLineageSiblingsById(id)
+	data, err := s.NodeRepository.FindLineageSiblingsById(id)
 	if err != nil {
 		return nil, err
 	}
 
-	orgTree := tree.New[Entity](".")
-	for i := 0; i < len(orgs); i++ {
-		orgTree.AssignEntity(orgs[i].Hierarchy, &orgs[i])
+	nodeTree := tree.New[Entity](".")
+	for i := 0; i < len(data); i++ {
+		nodeTree.AssignEntity(data[i].Hierarchy, &data[i])
 	}
-	return orgTree.Root, nil
+	return nodeTree.Root, nil
 }
