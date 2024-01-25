@@ -1,5 +1,5 @@
 
-PROJECT_NAME=connect-orgs
+PROJECT_NAME=connect-org
 VERSION=0.1.0
 IMAGE_NAME=ghcr.io/mrexmelle/$(PROJECT_NAME)
 GO_SOURCES=$(shell find . -name '*.go' -not -path "./vendor/*")

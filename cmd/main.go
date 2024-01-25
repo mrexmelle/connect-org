@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mrexmelle/connect-orgs/cmd/opts"
-	_ "github.com/mrexmelle/connect-orgs/docs"
+	"github.com/mrexmelle/connect-org/cmd/opts"
+	_ "github.com/mrexmelle/connect-org/docs"
 )
 
 // @title           Connect Organization API

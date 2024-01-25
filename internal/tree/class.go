@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Class[T Entity] struct {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/mrexmelle/connect-orgs/internal/dto"
-	"github.com/mrexmelle/connect-orgs/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Class[T any] struct {

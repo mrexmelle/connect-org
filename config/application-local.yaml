@@ -3,17 +3,17 @@ app:
     read:
       host: 127.0.0.1
       port: 5432
-      user: orgs_r
+      user: org_r
       password: 123
-      dbname: orgs
+      dbname: org
       sslmode: disable
       timezone: Asia/Jakarta
     write:
       host: 127.0.0.1
       port: 5432
-      user: orgs_w
+      user: org_w
       password: 123
-      dbname: orgs
+      dbname: org
       sslmode: disable
       timezone: Asia/Jakarta
   server:

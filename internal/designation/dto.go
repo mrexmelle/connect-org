@@ -1,13 +1,13 @@
-package placement
+package designation
 
 import (
-	"github.com/mrexmelle/connect-orgs/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/dto"
 )
 
 type PostRequestDto struct {
-	OrganizationId string `json:"organization_id"`
-	RoleId         string `json:"role_id"`
-	Ehid           string `json:"ehid"`
+	NodeId string `json:"node_id"`
+	RoleId string `json:"role_id"`
+	Ehid   string `json:"ehid"`
 }
 
 type PatchRequestDto struct {

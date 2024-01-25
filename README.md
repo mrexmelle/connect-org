@@ -1,4 +1,10 @@
-# connect-orgs
+# connect-org
+
+## Installing dependencies
+
+```
+$ go install github.com/swaggo/swag/cmd/swag
+```
 
 ## Compiling
 
@@ -33,7 +39,7 @@ $ docker compose up
 
 #### Run local service
 ```
-$ ./connect-orgs serve
+$ ./connect-org serve
 ```
 
 ### For docker environment

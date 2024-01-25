@@ -1,7 +1,7 @@
 package role
 
 import (
-	"github.com/mrexmelle/connect-orgs/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/dto"
 )
 
 type PostRequestDto struct {

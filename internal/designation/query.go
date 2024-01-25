@@ -1,4 +1,4 @@
-package placement
+package designation
 
 import (
 	"gorm.io/gorm"
@@ -7,25 +7,25 @@ import (
 var (
 	FieldsAll = []string{
 		"id",
-		"organization_id",
+		"node_id",
 		"role_id",
 		"ehid",
 	}
 
 	FieldsAllExceptId = []string{
-		"organization_id",
+		"node_id",
 		"role_id",
 		"ehid",
 	}
 
-	FieldsAllExceptOrganizationid = []string{
+	FieldsAllExceptNodeid = []string{
 		"id",
 		"role_id",
 		"ehid",
 	}
 
 	FieldsPatchable = []string{
-		"organization_id",
+		"node_id",
 		"role_id",
 		"ehid",
 	}
@@ -33,12 +33,8 @@ var (
 
 type Query interface {
 	SelectById(fields []string, id string) *gorm.DB
-	SelectByOrganizationId(fields []string, organization_id string) *gorm.DB
-	SelectByOrganizationIdAndRoleId(
-		fields []string,
-		organizationId string,
-		roleId string,
-	) *gorm.DB
+	SelectByNodeId(fields []string, node_id string) *gorm.DB
+	SelectByNodeIdAndRoleId(fields []string, nodeId string, roleId string) *gorm.DB
 }
 
 type QueryImpl struct {
@@ -65,20 +61,13 @@ func (q *QueryImpl) SelectById(fields []string, id string) *gorm.DB {
 		Where("id = ?", id)
 }
 
-func (q *QueryImpl) SelectByOrganizationId(
-	fields []string,
-	organization_id string,
-) *gorm.DB {
+func (q *QueryImpl) SelectByNodeId(fields []string, nodeId string) *gorm.DB {
 	return q.performSelect(fields).
-		Where("organization_id = ?", organization_id)
+		Where("node_id = ?", nodeId)
 }
 
-func (q *QueryImpl) SelectByOrganizationIdAndRoleId(
-	fields []string,
-	organizationId string,
-	roleId string,
-) *gorm.DB {
+func (q *QueryImpl) SelectByNodeIdAndRoleId(fields []string, nodeId string, roleId string) *gorm.DB {
 	return q.performSelect(fields).
-		Where("organization_id = ?", organizationId).
+		Where("node_id = ?", nodeId).
 		Where("role_id = ?", roleId)
 }
