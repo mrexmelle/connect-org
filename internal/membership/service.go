@@ -68,7 +68,7 @@ func (s *Service) DeleteById(id int) error {
 
 func (s *Service) RetrieveByEhidOrderByStartDate(ehid string, orderDir string) ([]ViewEntity, error) {
 	if orderDir != OrderAsc && orderDir != OrderDesc && orderDir != OrderNone {
-		return []ViewEntity{}, localerror.ErrUnsupportedQueryParam
+		return []ViewEntity{}, localerror.ErrBadQueryParam
 	}
 	result, err := s.MembershipRepository.FindByEhidOrderByStartDate(ehid, orderDir)
 	if err != nil {
