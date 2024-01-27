@@ -10,6 +10,7 @@ import (
 	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
 	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/tree"
 )
 
@@ -17,17 +18,20 @@ type Controller struct {
 	ConfigService      *config.Service
 	NodeService        *Service
 	DesignationService *designation.Service
+	MembershipService  *membership.Service
 }
 
 func NewController(
 	cfg *config.Service,
 	svc *Service,
 	ds *designation.Service,
+	ms *membership.Service,
 ) *Controller {
 	return &Controller{
 		ConfigService:      cfg,
 		NodeService:        svc,
 		DesignationService: ds,
+		MembershipService:  ms,
 	}
 }
 
@@ -168,4 +172,20 @@ func (c *Controller) GetOfficers(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	dtobuilderwithdata.New[[]designation.Entity](&data, err).RenderTo(w)
+}
+
+// Get Current Members within Nodes : HTTP endpoint to get the current members within a node
+// @Tags Nodes
+// @Description Get current members within a node
+// @Produce json
+// @Param id path string true "Node ID"
+// @Success 200 {object} GetCurrentMembersResponseDto "Success Response"
+// @Failure 400 "BadRequest"
+// @Failure 500 "InternalServerError"
+// @Router /nodes/{id}/current-members [GET]
+func (c *Controller) GetCurrentMembers(w http.ResponseWriter, r *http.Request) {
+	data, err := c.MembershipService.RetrieveCurrentByNodeId(
+		chi.URLParam(r, "id"),
+	)
+	dtobuilderwithdata.New[[]membership.Entity](&data, err).RenderTo(w)
 }

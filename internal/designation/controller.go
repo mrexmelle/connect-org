@@ -12,14 +12,14 @@ import (
 )
 
 type Controller struct {
-	ConfigService     *config.Service
-	AssignmentService *Service
+	ConfigService      *config.Service
+	DesignationService *Service
 }
 
 func NewController(cfg *config.Service, svc *Service) *Controller {
 	return &Controller{
-		ConfigService:     cfg,
-		AssignmentService: svc,
+		ConfigService:      cfg,
+		DesignationService: svc,
 	}
 }
 
@@ -33,7 +33,7 @@ func NewController(cfg *config.Service, svc *Service) *Controller {
 // @Failure 500 "InternalServerError"
 // @Router /designations/{id} [GET]
 func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
-	data, err := c.AssignmentService.RetrieveById(
+	data, err := c.DesignationService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
@@ -57,7 +57,7 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := c.AssignmentService.Create(requestBody)
+	data, err := c.DesignationService.Create(requestBody)
 	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
 }
 
@@ -79,7 +79,7 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
 		return
 	}
-	err = c.AssignmentService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
+	err = c.DesignationService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }
 
@@ -93,6 +93,6 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 "InternalServerError"
 // @Router /designations/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
-	err := c.AssignmentService.DeleteById(chi.URLParam(r, "id"))
+	err := c.DesignationService.DeleteById(chi.URLParam(r, "id"))
 	dtobuilderwithoutdata.New(err).RenderTo(w)
 }

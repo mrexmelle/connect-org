@@ -13,6 +13,7 @@ var (
 	ErrBadJson        = errors.New("bad_json")
 	ErrBadHierarchy   = errors.New("bad_hierarchy")
 	ErrAlreadyMax     = errors.New("already_max")
+	ErrIdNotInteger   = errors.New("id_not_integer")
 )
 
 const (
@@ -34,4 +35,5 @@ var ErrorMap = map[error]CodePair{
 	ErrBadJson:        NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
 	ErrBadHierarchy:   NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
 	ErrAlreadyMax:     NewCodePair(http.StatusForbidden, ErrAlreadyMax.Error()),
+	ErrIdNotInteger:   NewCodePair(http.StatusBadRequest, ErrIdNotInteger.Error()),
 }

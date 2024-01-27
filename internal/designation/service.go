@@ -7,9 +7,9 @@ import (
 )
 
 type Service struct {
-	ConfigService       *config.Service
-	PlacementRepository Repository
-	RoleRepository      role.Repository
+	ConfigService         *config.Service
+	DesignationRepository Repository
+	RoleRepository        role.Repository
 }
 
 func NewService(
@@ -18,19 +18,19 @@ func NewService(
 	rr role.Repository,
 ) *Service {
 	return &Service{
-		ConfigService:       cfg,
-		PlacementRepository: r,
-		RoleRepository:      rr,
+		ConfigService:         cfg,
+		DesignationRepository: r,
+		RoleRepository:        rr,
 	}
 }
 
 func (s *Service) Create(req PostRequestDto) (*Entity, error) {
-	existingPlacements, err := s.PlacementRepository.FindByNodeIdAndRoleId(
+	data, err := s.DesignationRepository.FindByNodeIdAndRoleId(
 		req.NodeId,
 		req.RoleId,
 	)
 	if err != nil {
-		existingPlacements = []Entity{}
+		data = []Entity{}
 	}
 
 	newEntity := &Entity{
@@ -39,21 +39,21 @@ func (s *Service) Create(req PostRequestDto) (*Entity, error) {
 		Ehid:   req.Ehid,
 	}
 
-	for i := range existingPlacements {
-		if existingPlacements[i].Ehid == req.Ehid &&
-			existingPlacements[i].NodeId == req.NodeId &&
-			existingPlacements[i].RoleId == req.RoleId {
-			newEntity.Id = existingPlacements[i].Id
+	for i := range data {
+		if data[i].Ehid == req.Ehid &&
+			data[i].NodeId == req.NodeId &&
+			data[i].RoleId == req.RoleId {
+			newEntity.Id = data[i].Id
 			return newEntity, nil
 		}
 	}
 
 	maxCount := s.RoleRepository.CountById(req.RoleId)
-	if (int64)(len(existingPlacements)) >= maxCount {
+	if (int64)(len(data)) >= maxCount {
 		return nil, localerror.ErrAlreadyMax
 	}
 
-	result, err := s.PlacementRepository.Create(newEntity)
+	result, err := s.DesignationRepository.Create(newEntity)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (s *Service) Create(req PostRequestDto) (*Entity, error) {
 }
 
 func (s *Service) RetrieveById(id string) (*Entity, error) {
-	result, err := s.PlacementRepository.FindById(id)
+	result, err := s.DesignationRepository.FindById(id)
 	if err != nil {
 		return nil, err
 	}
@@ -69,26 +69,26 @@ func (s *Service) RetrieveById(id string) (*Entity, error) {
 }
 
 func (s *Service) RetrieveByNodeId(nodeId string) ([]Entity, error) {
-	result, err := s.PlacementRepository.FindByNodeId(nodeId)
+	result, err := s.DesignationRepository.FindByNodeId(nodeId)
 	if err != nil {
-		return nil, err
+		return []Entity{}, err
 	}
 	return result, nil
 }
 
 func (s *Service) RetrieveByNodeIdAndRoleId(nodeId string, roleId string) ([]Entity, error) {
-	result, err := s.PlacementRepository.FindByNodeIdAndRoleId(nodeId, roleId)
+	result, err := s.DesignationRepository.FindByNodeIdAndRoleId(nodeId, roleId)
 	if err != nil {
-		return nil, err
+		return []Entity{}, err
 	}
 	return result, nil
 }
 
 func (s *Service) UpdateById(fields map[string]interface{}, id string) error {
-	return s.PlacementRepository.UpdateById(fields, id)
+	return s.DesignationRepository.UpdateById(fields, id)
 }
 
 func (s *Service) DeleteById(id string) error {
-	err := s.PlacementRepository.DeleteById(id)
+	err := s.DesignationRepository.DeleteById(id)
 	return err
 }

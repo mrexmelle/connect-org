@@ -9,6 +9,7 @@ import (
 	"github.com/mrexmelle/connect-org/internal/config"
 	"github.com/mrexmelle/connect-org/internal/designation"
 	"github.com/mrexmelle/connect-org/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/node"
 	"github.com/mrexmelle/connect-org/internal/role"
 	"github.com/spf13/cobra"
@@ -26,24 +27,28 @@ func Serve(cmd *cobra.Command, args []string) {
 
 	container.Provide(config.NewRepository)
 	container.Provide(designation.NewRepository)
-	container.Provide(role.NewRepository)
+	container.Provide(membership.NewRepository)
 	container.Provide(node.NewRepository)
+	container.Provide(role.NewRepository)
 
 	container.Provide(config.NewService)
 	container.Provide(localerror.NewService)
 	container.Provide(designation.NewService)
-	container.Provide(role.NewService)
+	container.Provide(membership.NewService)
 	container.Provide(node.NewService)
+	container.Provide(role.NewService)
 
 	container.Provide(designation.NewController)
-	container.Provide(role.NewController)
+	container.Provide(membership.NewController)
 	container.Provide(node.NewController)
+	container.Provide(role.NewController)
 
 	process := func(
 		configService *config.Service,
 		designationController *designation.Controller,
-		roleController *role.Controller,
+		membershipController *membership.Controller,
 		nodeController *node.Controller,
+		roleController *role.Controller,
 	) {
 		r := chi.NewRouter()
 
@@ -73,6 +78,7 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}/lineage", nodeController.GetLineage)
 			r.Get("/{id}/officers", nodeController.GetOfficers)
 			r.Get("/{id}/lineage-siblings", nodeController.GetLineageSiblings)
+			r.Get("/{id}/current-members", nodeController.GetCurrentMembers)
 		})
 
 		r.Route("/roles", func(r chi.Router) {
@@ -87,6 +93,13 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}", designationController.Get)
 			r.Patch("/{id}", designationController.Patch)
 			r.Delete("/{id}", designationController.Delete)
+		})
+
+		r.Route("/memberships", func(r chi.Router) {
+			r.Post("/", membershipController.Post)
+			r.Get("/{id}", membershipController.Get)
+			r.Patch("/{id}", membershipController.Patch)
+			r.Delete("/{id}", membershipController.Delete)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)

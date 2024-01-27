@@ -3,6 +3,7 @@ package node
 import (
 	"github.com/mrexmelle/connect-org/internal/designation"
 	"github.com/mrexmelle/connect-org/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/tree"
 )
 
@@ -25,3 +26,4 @@ type GetChildrenResponseDto = dto.HttpResponseWithData[[]Entity]
 type GetLineageResponseDto = dto.HttpResponseWithData[tree.Node[Entity]]
 type GetLineagelSiblingsResponseDto = dto.HttpResponseWithData[tree.Node[Entity]]
 type GetOfficersResponseDto = dto.HttpResponseWithData[[]designation.Entity]
+type GetCurrentMembersResponseDto = dto.HttpResponseWithData[[]membership.Entity]
