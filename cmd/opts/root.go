@@ -8,5 +8,5 @@ var RootCmd = &cobra.Command{
 	Use:     "connect-org",
 	Short:   "Connect Org",
 	Long:    "Connect Org - An organization service for Connect",
-	Version: "0.1.0",
+	Version: "0.2.0",
 }

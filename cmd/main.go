@@ -6,7 +6,7 @@ import (
 )
 
 // @title           Connect Organization API
-// @version         0.1.0
+// @version         0.2.0
 // @description     Organization API for Connect.
 
 // @contact.email  mrexmelle@gmail.com
