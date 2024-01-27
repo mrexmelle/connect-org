@@ -18,6 +18,19 @@ definitions:
       message:
         type: string
     type: object
+  github_com_mrexmelle_connect-org_internal_membership.Entity:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      node_id:
+        type: string
+      start_date:
+        type: string
+    type: object
   github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity:
     properties:
       children:
@@ -77,6 +90,60 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
+  internal_membership.DeleteResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_membership.Entity:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      node_id:
+        type: string
+      start_date:
+        type: string
+    type: object
+  internal_membership.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_membership.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_membership.PatchRequestDto:
+    properties:
+      fields:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_membership.PatchResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_membership.PostRequestDto:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      node_id:
+        type: string
+      start_date:
+        type: string
+    type: object
+  internal_membership.PostResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_membership.Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
   internal_node.DeleteResponseDto:
     properties:
       error:
@@ -98,6 +165,15 @@ definitions:
       data:
         items:
           $ref: '#/definitions/internal_node.Entity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_node.GetCurrentMembersResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_membership.Entity'
         type: array
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
@@ -324,6 +400,103 @@ paths:
           description: InternalServerError
       tags:
       - Designations
+  /memberships:
+    post:
+      consumes:
+      - application/json
+      description: Post a new memberships
+      parameters:
+      - description: Membership Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_membership.PostRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_membership.PostResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Memberships
+  /memberships/{id}:
+    delete:
+      description: Delete a membership
+      parameters:
+      - description: Membership ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_membership.DeleteResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Memberships
+    get:
+      description: Get a memberhsip
+      parameters:
+      - description: Membership ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_membership.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Memberships
+    patch:
+      consumes:
+      - application/json
+      description: Patch a membership
+      parameters:
+      - description: Membership ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Membership Patch Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_membership.PatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_membership.PatchResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Memberships
   /nodes:
     post:
       consumes:
@@ -437,6 +610,28 @@ paths:
           description: Success Response
           schema:
             $ref: '#/definitions/internal_node.GetChildrenResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Nodes
+  /nodes/{id}/current-members:
+    get:
+      description: Get current members within a node
+      parameters:
+      - description: Node ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_node.GetCurrentMembersResponseDto'
         "400":
           description: BadRequest
         "500":

@@ -18,7 +18,7 @@ var (
 		"ehid",
 	}
 
-	FieldsAllExceptNodeid = []string{
+	FieldsAllExceptNodeId = []string{
 		"id",
 		"role_id",
 		"ehid",
@@ -33,7 +33,7 @@ var (
 
 type Query interface {
 	SelectById(fields []string, id string) *gorm.DB
-	SelectByNodeId(fields []string, node_id string) *gorm.DB
+	SelectByNodeId(fields []string, nodeId string) *gorm.DB
 	SelectByNodeIdAndRoleId(fields []string, nodeId string, roleId string) *gorm.DB
 }
 

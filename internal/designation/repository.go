@@ -10,9 +10,9 @@ import (
 type Repository interface {
 	Create(req *Entity) (*Entity, error)
 	FindById(id string) (*Entity, error)
-	FindByNodeId(nodeId string) ([]Entity, error)
 	UpdateById(fields map[string]interface{}, ehid string) error
 	DeleteById(id string) error
+	FindByNodeId(nodeId string) ([]Entity, error)
 	FindByNodeIdAndRoleId(nodeId string, roleId string) ([]Entity, error)
 }
 
@@ -31,14 +31,14 @@ func NewRepository(cfg *config.Service) Repository {
 }
 
 func (r *RepositoryImpl) Create(req *Entity) (*Entity, error) {
-	result := r.ConfigService.WriteDb.Exec(
+	result := r.ConfigService.WriteDb.Raw(
 		"INSERT INTO "+r.TableName+"(node_id, role_id, ehid, "+
 			"created_at, updated_at) "+
-			"VALUES(?, ?, ?, NOW(), NOW())",
+			"VALUES(?, ?, ?, NOW(), NOW()) RETURNING id",
 		req.NodeId,
 		req.RoleId,
 		req.Ehid,
-	)
+	).Scan(&req.Id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -47,23 +47,23 @@ func (r *RepositoryImpl) Create(req *Entity) (*Entity, error) {
 }
 
 func (r *RepositoryImpl) FindById(id string) (*Entity, error) {
-	org := Entity{
+	response := Entity{
 		Id: id,
 	}
-	result := r.Query.SelectById(FieldsAllExceptId, id).First(&org)
+	result := r.Query.SelectById(FieldsAllExceptId, id).First(&response)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &org, nil
+	return &response, nil
 }
 
 func (r *RepositoryImpl) FindByNodeId(nodeId string) ([]Entity, error) {
-	placements := []Entity{}
-	result := r.Query.SelectByNodeId(FieldsAll, nodeId).Find(&placements)
+	response := []Entity{}
+	result := r.Query.SelectByNodeId(FieldsAll, nodeId).Find(&response)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return placements, nil
+	return response, nil
 }
 
 func (r *RepositoryImpl) UpdateById(fields map[string]interface{}, id string) error {
@@ -118,14 +118,14 @@ func (r *RepositoryImpl) FindByNodeIdAndRoleId(
 	nodeId string,
 	roleId string,
 ) ([]Entity, error) {
-	placements := []Entity{}
+	response := []Entity{}
 	result := r.Query.SelectByNodeIdAndRoleId(
 		FieldsAll,
 		nodeId,
 		roleId,
-	).Find(&placements)
+	).Find(&response)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return placements, nil
+	return response, nil
 }
