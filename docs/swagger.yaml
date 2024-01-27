@@ -319,7 +319,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Connect Organization API
-  version: 0.1.0
+  version: 0.2.0
 paths:
   /designations:
     post:
@@ -426,6 +426,10 @@ paths:
         in: path
         name: ehid
         required: true
+        type: string
+      - description: Start Date's sorting direction (asc or desc)
+        in: query
+        name: sort
         type: string
       produces:
       - application/json

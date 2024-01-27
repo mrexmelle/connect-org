@@ -186,6 +186,12 @@ const docTemplate = `{
                         "name": "ehid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start Date's sorting direction (asc or desc)",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1344,7 +1350,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.1.0",
+	Version:          "0.2.0",
 	Host:             "localhost:8081",
 	BasePath:         "/",
 	Schemes:          []string{},

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/mrexmelle/connect-org/internal/config"
+	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Service struct {
@@ -65,8 +66,11 @@ func (s *Service) DeleteById(id int) error {
 	return err
 }
 
-func (s *Service) RetrieveByEhid(ehid string) ([]ViewEntity, error) {
-	result, err := s.MembershipRepository.FindByEhid(ehid)
+func (s *Service) RetrieveByEhidOrderByStartDate(ehid string, orderDir string) ([]ViewEntity, error) {
+	if orderDir != OrderAsc && orderDir != OrderDesc && orderDir != OrderNone {
+		return []ViewEntity{}, localerror.ErrUnsupportedQueryParam
+	}
+	result, err := s.MembershipRepository.FindByEhidOrderByStartDate(ehid, orderDir)
 	if err != nil {
 		return []ViewEntity{}, err
 	}

@@ -29,11 +29,16 @@ var (
 	FieldsPatchable = []string{
 		"end_date",
 	}
+
+	OrderAsc  = "ASC"
+	OrderDesc = "DESC"
+	OrderNone = ""
 )
 
 type Query interface {
 	SelectById(fields []string, id int) *gorm.DB
 	SelectByEhid(fields []string, ehid string) *gorm.DB
+	SelectByEhidOrderByStartDate(fields []string, ehid string, orderDir string) *gorm.DB
 	SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB
 	SelectActiveByEhid(fields []string, ehid string) *gorm.DB
 }
@@ -64,6 +69,15 @@ func (q *QueryImpl) SelectById(fields []string, id int) *gorm.DB {
 func (q *QueryImpl) SelectByEhid(fields []string, ehid string) *gorm.DB {
 	return q.performSelect(fields).
 		Where("ehid = ?", ehid)
+}
+
+func (q *QueryImpl) SelectByEhidOrderByStartDate(fields []string, ehid string, orderDir string) *gorm.DB {
+	if orderDir == OrderNone {
+		return q.SelectByEhid(fields, ehid)
+	} else {
+		return q.SelectByEhid(fields, ehid).
+			Order("start_date " + orderDir)
+	}
 }
 
 func (q *QueryImpl) SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB {
