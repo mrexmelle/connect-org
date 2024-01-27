@@ -9,11 +9,11 @@ import (
 	"github.com/mrexmelle/connect-org/internal/config"
 	"github.com/mrexmelle/connect-org/internal/designation"
 	"github.com/mrexmelle/connect-org/internal/localerror"
+	"github.com/mrexmelle/connect-org/internal/member"
 	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/node"
 	"github.com/mrexmelle/connect-org/internal/role"
 	"github.com/spf13/cobra"
-
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/dig"
 )
@@ -39,6 +39,7 @@ func Serve(cmd *cobra.Command, args []string) {
 	container.Provide(role.NewService)
 
 	container.Provide(designation.NewController)
+	container.Provide(member.NewController)
 	container.Provide(membership.NewController)
 	container.Provide(node.NewController)
 	container.Provide(role.NewController)
@@ -46,6 +47,7 @@ func Serve(cmd *cobra.Command, args []string) {
 	process := func(
 		configService *config.Service,
 		designationController *designation.Controller,
+		memberController *member.Controller,
 		membershipController *membership.Controller,
 		nodeController *node.Controller,
 		roleController *role.Controller,
@@ -78,7 +80,7 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}/lineage", nodeController.GetLineage)
 			r.Get("/{id}/officers", nodeController.GetOfficers)
 			r.Get("/{id}/lineage-siblings", nodeController.GetLineageSiblings)
-			r.Get("/{id}/current-members", nodeController.GetCurrentMembers)
+			r.Get("/{id}/members", nodeController.GetMembers)
 		})
 
 		r.Route("/roles", func(r chi.Router) {
@@ -100,6 +102,11 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}", membershipController.Get)
 			r.Patch("/{id}", membershipController.Patch)
 			r.Delete("/{id}", membershipController.Delete)
+		})
+
+		r.Route("/members", func(r chi.Router) {
+			r.Get("/{ehid}/nodes", memberController.GetNodes)
+			r.Get("/{ehid}/history", memberController.GetHistory)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
