@@ -12,7 +12,7 @@ type Repository interface {
 	FindById(id int) (*Entity, error)
 	UpdateById(fields map[string]interface{}, id int) error
 	DeleteById(id int) error
-	FindByEhid(ehid string) ([]Entity, error)
+	FindByEhidOrderByStartDate(ehid string, orderDir string) ([]Entity, error)
 	FindCurrentByNodeId(nodeId string) ([]Entity, error)
 	FindCurrentByEhid(ehid string) ([]Entity, error)
 }
@@ -72,9 +72,9 @@ func (r *RepositoryImpl) FindById(id int) (*Entity, error) {
 	return &response, nil
 }
 
-func (r *RepositoryImpl) FindByEhid(ehid string) ([]Entity, error) {
+func (r *RepositoryImpl) FindByEhidOrderByStartDate(ehid string, orderDir string) ([]Entity, error) {
 	response := []Entity{}
-	result := r.Query.SelectByEhid(FieldsAll, ehid).Find(&response)
+	result := r.Query.SelectByEhidOrderByStartDate(FieldsAll, ehid, orderDir).Find(&response)
 	if result.Error != nil {
 		return []Entity{}, result.Error
 	}
