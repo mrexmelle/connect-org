@@ -174,18 +174,18 @@ func (c *Controller) GetOfficers(w http.ResponseWriter, r *http.Request) {
 	dtobuilderwithdata.New[[]designation.Entity](&data, err).RenderTo(w)
 }
 
-// Get Current Members within Nodes : HTTP endpoint to get the current members within a node
+// Get Members within Nodes : HTTP endpoint to get the current members within a node
 // @Tags Nodes
 // @Description Get current members within a node
 // @Produce json
 // @Param id path string true "Node ID"
-// @Success 200 {object} GetCurrentMembersResponseDto "Success Response"
+// @Success 200 {object} GetMembersResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
-// @Router /nodes/{id}/current-members [GET]
-func (c *Controller) GetCurrentMembers(w http.ResponseWriter, r *http.Request) {
+// @Router /nodes/{id}/members [GET]
+func (c *Controller) GetMembers(w http.ResponseWriter, r *http.Request) {
 	data, err := c.MembershipService.RetrieveCurrentByNodeId(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[[]membership.Entity](&data, err).RenderTo(w)
+	dtobuilderwithdata.New[[]membership.ViewEntity](&data, err).RenderTo(w)
 }

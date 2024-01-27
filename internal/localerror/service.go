@@ -23,5 +23,5 @@ func (s *Service) Map(err error) StatusInfo {
 		return NewStatusInfo(codePair.HttpStatusCode, codePair.ServiceErrorCode, err.Error())
 	}
 
-	return NewStatusInfo(http.StatusBadRequest, ErrSvcCodeUnregistered, err.Error())
+	return NewStatusInfo(http.StatusInternalServerError, ErrSvcCodeUnregistered, err.Error())
 }

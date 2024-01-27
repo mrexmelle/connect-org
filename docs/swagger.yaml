@@ -18,7 +18,7 @@ definitions:
       message:
         type: string
     type: object
-  github_com_mrexmelle_connect-org_internal_membership.Entity:
+  github_com_mrexmelle_connect-org_internal_membership.ViewEntity:
     properties:
       ehid:
         type: string
@@ -90,28 +90,33 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
+  internal_member.GetHistoryResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_member.GetNodesResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity'
+        type: array
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
   internal_membership.DeleteResponseDto:
     properties:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
-  internal_membership.Entity:
-    properties:
-      ehid:
-        type: string
-      end_date:
-        type: string
-      id:
-        type: integer
-      node_id:
-        type: string
-      start_date:
-        type: string
-    type: object
   internal_membership.GetResponseDto:
     properties:
       data:
-        $ref: '#/definitions/internal_membership.Entity'
+        $ref: '#/definitions/internal_membership.ViewEntity'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
@@ -140,9 +145,22 @@ definitions:
   internal_membership.PostResponseDto:
     properties:
       data:
-        $ref: '#/definitions/internal_membership.Entity'
+        $ref: '#/definitions/internal_membership.ViewEntity'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_membership.ViewEntity:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      node_id:
+        type: string
+      start_date:
+        type: string
     type: object
   internal_node.DeleteResponseDto:
     properties:
@@ -169,15 +187,6 @@ definitions:
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
-  internal_node.GetCurrentMembersResponseDto:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_membership.Entity'
-        type: array
-      error:
-        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
-    type: object
   internal_node.GetLineageResponseDto:
     properties:
       data:
@@ -189,6 +198,15 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
+    type: object
+  internal_node.GetMembersResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity'
+        type: array
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError'
     type: object
@@ -400,6 +418,50 @@ paths:
           description: InternalServerError
       tags:
       - Designations
+  /members/{ehid}/history:
+    get:
+      description: Get a member's current organization nodes
+      parameters:
+      - description: Employee Hash ID
+        in: path
+        name: ehid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_member.GetHistoryResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Members
+  /members/{ehid}/nodes:
+    get:
+      description: Get a member's current organization nodes
+      parameters:
+      - description: Employee Hash ID
+        in: path
+        name: ehid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_member.GetNodesResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Members
   /memberships:
     post:
       consumes:
@@ -616,28 +678,6 @@ paths:
           description: InternalServerError
       tags:
       - Nodes
-  /nodes/{id}/current-members:
-    get:
-      description: Get current members within a node
-      parameters:
-      - description: Node ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Success Response
-          schema:
-            $ref: '#/definitions/internal_node.GetCurrentMembersResponseDto'
-        "400":
-          description: BadRequest
-        "500":
-          description: InternalServerError
-      tags:
-      - Nodes
   /nodes/{id}/lineage:
     get:
       description: Get lineage of a node
@@ -676,6 +716,28 @@ paths:
           description: Success Response
           schema:
             $ref: '#/definitions/internal_node.GetLineagelSiblingsResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Nodes
+  /nodes/{id}/members:
+    get:
+      description: Get current members within a node
+      parameters:
+      - description: Node ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_node.GetMembersResponseDto'
         "400":
           description: BadRequest
         "500":

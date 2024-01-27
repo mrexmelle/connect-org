@@ -170,6 +170,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/members/{ehid}/history": {
+            "get": {
+                "description": "Get a member's current organization nodes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Members"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee Hash ID",
+                        "name": "ehid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_member.GetHistoryResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/members/{ehid}/nodes": {
+            "get": {
+                "description": "Get a member's current organization nodes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Members"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee Hash ID",
+                        "name": "ehid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_member.GetNodesResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
         "/memberships": {
             "post": {
                 "description": "Post a new memberships",
@@ -502,40 +570,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/nodes/{id}/current-members": {
-            "get": {
-                "description": "Get current members within a node",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Nodes"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Node ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_node.GetCurrentMembersResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
         "/nodes/{id}/lineage": {
             "get": {
                 "description": "Get lineage of a node",
@@ -593,6 +627,40 @@ const docTemplate = `{
                         "description": "Success Response",
                         "schema": {
                             "$ref": "#/definitions/internal_node.GetLineagelSiblingsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/nodes/{id}/members": {
+            "get": {
+                "description": "Get current members within a node",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nodes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Node ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_node.GetMembersResponseDto"
                         }
                     },
                     "400": {
@@ -817,7 +885,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_mrexmelle_connect-org_internal_membership.Entity": {
+        "github_com_mrexmelle_connect-org_internal_membership.ViewEntity": {
             "type": "object",
             "properties": {
                 "ehid": {
@@ -929,6 +997,34 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_member.GetHistoryResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity"
+                    }
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_member.GetNodesResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity"
+                    }
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
         "internal_membership.DeleteResponseDto": {
             "type": "object",
             "properties": {
@@ -937,31 +1033,11 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_membership.Entity": {
-            "type": "object",
-            "properties": {
-                "ehid": {
-                    "type": "string"
-                },
-                "end_date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "node_id": {
-                    "type": "string"
-                },
-                "start_date": {
-                    "type": "string"
-                }
-            }
-        },
         "internal_membership.GetResponseDto": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/internal_membership.Entity"
+                    "$ref": "#/definitions/internal_membership.ViewEntity"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
@@ -1006,10 +1082,30 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/internal_membership.Entity"
+                    "$ref": "#/definitions/internal_membership.ViewEntity"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_membership.ViewEntity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
                 }
             }
         },
@@ -1052,20 +1148,6 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_node.GetCurrentMembersResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_membership.Entity"
-                    }
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
-                }
-            }
-        },
         "internal_node.GetLineageResponseDto": {
             "type": "object",
             "properties": {
@@ -1082,6 +1164,20 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_tree.Node-internal_node_Entity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_node.GetMembersResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_membership.ViewEntity"
+                    }
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-org_internal_dto.ServiceError"
