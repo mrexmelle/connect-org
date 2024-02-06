@@ -15,6 +15,7 @@ var (
 	ErrAlreadyMax     = errors.New("already_max")
 	ErrIdNotInteger   = errors.New("id_not_integer")
 	ErrBadQueryParam  = errors.New("bad_query_param")
+	ErrHttpClient     = errors.New("http_client_error")
 )
 
 const (
@@ -38,4 +39,5 @@ var ErrorMap = map[error]CodePair{
 	ErrAlreadyMax:     NewCodePair(http.StatusForbidden, ErrAlreadyMax.Error()),
 	ErrIdNotInteger:   NewCodePair(http.StatusBadRequest, ErrIdNotInteger.Error()),
 	ErrBadQueryParam:  NewCodePair(http.StatusBadRequest, ErrBadQueryParam.Error()),
+	ErrHttpClient:     NewCodePair(http.StatusInternalServerError, ErrHttpClient.Error()),
 }

@@ -2,7 +2,8 @@ package node
 
 import (
 	"github.com/mrexmelle/connect-org/internal/designation"
-	"github.com/mrexmelle/connect-org/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/tree"
 )
@@ -18,12 +19,12 @@ type PatchRequestDto struct {
 	Fields map[string]interface{} `json:"fields"`
 }
 
-type GetResponseDto = dto.HttpResponseWithData[Entity]
-type PostResponseDto = dto.HttpResponseWithData[Entity]
-type PatchResponseDto = dto.HttpResponseWithoutData
-type DeleteResponseDto = dto.HttpResponseWithoutData
-type GetChildrenResponseDto = dto.HttpResponseWithData[[]Entity]
-type GetLineageResponseDto = dto.HttpResponseWithData[tree.Node[Entity]]
-type GetLineagelSiblingsResponseDto = dto.HttpResponseWithData[tree.Node[Entity]]
-type GetOfficersResponseDto = dto.HttpResponseWithData[[]designation.Entity]
-type GetMembersResponseDto = dto.HttpResponseWithData[[]membership.ViewEntity]
+type GetResponseDto = dtorespwithdata.Class[Entity]
+type PostResponseDto = dtorespwithdata.Class[Entity]
+type PatchResponseDto = dtorespwithoutdata.Class
+type DeleteResponseDto = dtorespwithoutdata.Class
+type GetChildrenResponseDto = dtorespwithdata.Class[[]Entity]
+type GetLineageResponseDto = dtorespwithdata.Class[tree.Node[Entity]]
+type GetLineagelSiblingsResponseDto = dtorespwithdata.Class[tree.Node[Entity]]
+type GetOfficersResponseDto = dtorespwithdata.Class[[]designation.Entity]
+type GetMembersResponseDto = dtorespwithdata.Class[[]membership.ViewEntity]

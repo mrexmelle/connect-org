@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/mrexmelle/connect-org/internal/config"
 	"github.com/mrexmelle/connect-org/internal/designation"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
 	"github.com/mrexmelle/connect-org/internal/membership"
 	"github.com/mrexmelle/connect-org/internal/tree"
@@ -16,6 +16,7 @@ import (
 
 type Controller struct {
 	ConfigService      *config.Service
+	LocalErrorService  *localerror.Service
 	NodeService        *Service
 	DesignationService *designation.Service
 	MembershipService  *membership.Service
@@ -23,12 +24,14 @@ type Controller struct {
 
 func NewController(
 	cfg *config.Service,
+	les *localerror.Service,
 	svc *Service,
 	ds *designation.Service,
 	ms *membership.Service,
 ) *Controller {
 	return &Controller{
 		ConfigService:      cfg,
+		LocalErrorService:  les,
 		NodeService:        svc,
 		DesignationService: ds,
 		MembershipService:  ms,
@@ -48,7 +51,12 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	data, err := c.NodeService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Post Nodes : HTTP endpoint to post new nodes
@@ -65,12 +73,20 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrBadJson).RenderTo(w)
+		dtorespwithdata.NewError(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.NodeService.Create(requestBody)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Patch Nodes : HTTP endpoint to patch a node
@@ -88,11 +104,18 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 	var requestBody PatchRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 	err = c.NodeService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Delete Nodes : HTTP endpoint to delete nodes
@@ -106,7 +129,11 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 // @Router /nodes/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	err := c.NodeService.DeleteById(chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Get Children of Nodes : HTTP endpoint to get the children of a node
@@ -122,7 +149,12 @@ func (c *Controller) GetChildren(w http.ResponseWriter, r *http.Request) {
 	data, err := c.NodeService.RetrieveChildrenById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[[]Entity](&data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[[]Entity](
+		&data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Get Lineage of Nodes : HTTP endpoint to get the lineage of a node
@@ -138,8 +170,12 @@ func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
 	data, err := c.NodeService.RetrieveLineageById(
 		chi.URLParam(r, "id"),
 	)
-
-	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[tree.Node[Entity]](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Get Lineage Siblings of Nodes : HTTP endpoint to get the siblings and ancestral siblings of a node
@@ -155,7 +191,12 @@ func (c *Controller) GetLineageSiblings(w http.ResponseWriter, r *http.Request) 
 	data, err := c.NodeService.RetrieveLineageSiblingsById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[tree.Node[Entity]](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[tree.Node[Entity]](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Get Officers within Nodes : HTTP endpoint to get the officers within a node
@@ -171,7 +212,12 @@ func (c *Controller) GetOfficers(w http.ResponseWriter, r *http.Request) {
 	data, err := c.DesignationService.RetrieveByNodeId(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[[]designation.Entity](&data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[[]designation.Entity](
+		&data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Get Members within Nodes : HTTP endpoint to get the current members within a node
@@ -187,5 +233,10 @@ func (c *Controller) GetMembers(w http.ResponseWriter, r *http.Request) {
 	data, err := c.MembershipService.RetrieveCurrentByNodeId(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[[]membership.ViewEntity](&data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[[]membership.ViewEntity](
+		&data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }

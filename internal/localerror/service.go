@@ -15,13 +15,21 @@ func NewService(cfg *config.Service) *Service {
 
 func (s *Service) Map(err error) StatusInfo {
 	if err == nil {
-		return NewStatusInfo(http.StatusOK, ErrSvcCodeNone, "OK")
+		return NewStatusInfo(http.StatusOK, ErrSvcCodeNone, "")
 	}
 
 	codePair, exists := ErrorMap[err]
 	if exists {
-		return NewStatusInfo(codePair.HttpStatusCode, codePair.ServiceErrorCode, err.Error())
+		return NewStatusInfo(
+			codePair.HttpStatusCode,
+			codePair.ServiceErrorCode,
+			err.Error(),
+		)
 	}
 
-	return NewStatusInfo(http.StatusInternalServerError, ErrSvcCodeUnregistered, err.Error())
+	return NewStatusInfo(
+		http.StatusInternalServerError,
+		ErrSvcCodeUnregistered,
+		"",
+	)
 }

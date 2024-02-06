@@ -6,13 +6,14 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/mrexmelle/connect-org/internal/config"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Controller struct {
 	ConfigService      *config.Service
+	LocalErrorService  *localerror.Service
 	DesignationService *Service
 }
 
@@ -36,7 +37,12 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	data, err := c.DesignationService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Post Designations : HTTP endpoint to post new designations
@@ -53,12 +59,20 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrBadJson).RenderTo(w)
+		dtorespwithdata.NewError(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.DesignationService.Create(requestBody)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Patch Designations : HTTP endpoint to patch a designation
@@ -76,11 +90,18 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 	var requestBody PatchRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 	err = c.DesignationService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Delete Designations : HTTP endpoint to delete designations
@@ -94,5 +115,9 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 // @Router /designations/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	err := c.DesignationService.DeleteById(chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
