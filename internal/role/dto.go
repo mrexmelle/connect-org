@@ -1,7 +1,8 @@
 package role
 
 import (
-	"github.com/mrexmelle/connect-org/internal/dto"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 )
 
 type PostRequestDto struct {
@@ -15,7 +16,7 @@ type PatchRequestDto struct {
 	Fields map[string]interface{} `json:"fields"`
 }
 
-type GetResponseDto = dto.HttpResponseWithData[Entity]
-type PostResponseDto = dto.HttpResponseWithData[Entity]
-type PatchResponseDto = dto.HttpResponseWithoutData
-type DeleteResponseDto = dto.HttpResponseWithoutData
+type GetResponseDto = dtorespwithdata.Class[Entity]
+type PostResponseDto = dtorespwithdata.Class[Entity]
+type PatchResponseDto = dtorespwithoutdata.Class
+type DeleteResponseDto = dtorespwithoutdata.Class

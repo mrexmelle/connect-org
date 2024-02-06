@@ -7,19 +7,21 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/mrexmelle/connect-org/internal/config"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Controller struct {
 	ConfigService     *config.Service
+	LocalErrorService *localerror.Service
 	MembershipService *Service
 }
 
-func NewController(cfg *config.Service, svc *Service) *Controller {
+func NewController(cfg *config.Service, les *localerror.Service, svc *Service) *Controller {
 	return &Controller{
 		ConfigService:     cfg,
+		LocalErrorService: les,
 		MembershipService: svc,
 	}
 }
@@ -36,11 +38,19 @@ func NewController(cfg *config.Service, svc *Service) *Controller {
 func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrIdNotInteger).RenderTo(w)
+		dtorespwithdata.NewError(
+			localerror.ErrIdNotInteger.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 	data, err := c.MembershipService.RetrieveById(id)
-	dtobuilderwithdata.New[ViewEntity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[ViewEntity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Post Memberships : HTTP endpoint to post new memberships
@@ -57,12 +67,20 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrBadJson).RenderTo(w)
+		dtorespwithdata.NewError(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.MembershipService.Create(requestBody)
-	dtobuilderwithdata.New[ViewEntity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[ViewEntity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Patch Memberships : HTTP endpoint to patch a membership
@@ -79,19 +97,29 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrIdNotInteger).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrIdNotInteger.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	var requestBody PatchRequestDto
 	err = json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	err = c.MembershipService.UpdateById(requestBody.Fields, id)
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Delete Memberships : HTTP endpoint to delete memberships
@@ -106,10 +134,17 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrIdNotInteger).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	err = c.MembershipService.DeleteById(id)
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }

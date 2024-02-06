@@ -6,20 +6,22 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/mrexmelle/connect-org/internal/config"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithdata"
-	"github.com/mrexmelle/connect-org/internal/dto/dtobuilderwithoutdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithdata"
+	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
 )
 
 type Controller struct {
-	ConfigService *config.Service
-	RoleService   *Service
+	ConfigService     *config.Service
+	LocalErrorService *localerror.Service
+	RoleService       *Service
 }
 
-func NewController(cfg *config.Service, svc *Service) *Controller {
+func NewController(cfg *config.Service, les *localerror.Service, svc *Service) *Controller {
 	return &Controller{
-		ConfigService: cfg,
-		RoleService:   svc,
+		ConfigService:     cfg,
+		LocalErrorService: les,
+		RoleService:       svc,
 	}
 }
 
@@ -36,7 +38,12 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	data, err := c.RoleService.RetrieveById(
 		chi.URLParam(r, "id"),
 	)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Post Roles : HTTP endpoint to post new roles
@@ -53,12 +60,20 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 	var requestBody PostRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithdata.New[Entity](nil, localerror.ErrBadJson).RenderTo(w)
+		dtorespwithdata.NewError(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 
 	data, err := c.RoleService.Create(requestBody)
-	dtobuilderwithdata.New[Entity](data, err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithdata.New[Entity](
+		data,
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Patch Roles : HTTP endpoint to patch a role
@@ -76,11 +91,18 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 	var requestBody PatchRequestDto
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		dtobuilderwithoutdata.New(localerror.ErrBadJson).RenderTo(w)
+		dtorespwithoutdata.New(
+			localerror.ErrBadJson.Error(),
+			err.Error(),
+		).RenderTo(w, http.StatusBadRequest)
 		return
 	}
 	err = c.RoleService.UpdateById(requestBody.Fields, chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
 
 // Delete Roles : HTTP endpoint to delete roles
@@ -94,5 +116,9 @@ func (c *Controller) Patch(w http.ResponseWriter, r *http.Request) {
 // @Router /roles/{id} [DELETE]
 func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	err := c.RoleService.DeleteById(chi.URLParam(r, "id"))
-	dtobuilderwithoutdata.New(err).RenderTo(w)
+	info := c.LocalErrorService.Map(err)
+	dtorespwithoutdata.New(
+		info.ServiceErrorCode,
+		info.ServiceErrorMessage,
+	).RenderTo(w, info.HttpStatusCode)
 }
