@@ -11,7 +11,6 @@ import (
 	"github.com/mrexmelle/connect-org/internal/dto/dtorespwithoutdata"
 	"github.com/mrexmelle/connect-org/internal/localerror"
 	"github.com/mrexmelle/connect-org/internal/membership"
-	"github.com/mrexmelle/connect-org/internal/tree"
 )
 
 type Controller struct {
@@ -52,7 +51,7 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[Entity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -82,7 +81,7 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.NodeService.Create(requestBody)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[Entity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -150,7 +149,7 @@ func (c *Controller) GetChildren(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]Entity](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -171,7 +170,7 @@ func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[tree.Node[Entity]](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -192,7 +191,7 @@ func (c *Controller) GetLineageSiblings(w http.ResponseWriter, r *http.Request) 
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[tree.Node[Entity]](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -213,7 +212,7 @@ func (c *Controller) GetOfficers(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]designation.Entity](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -234,7 +233,7 @@ func (c *Controller) GetMembers(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]membership.ViewEntity](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,

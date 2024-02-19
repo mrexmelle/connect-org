@@ -38,7 +38,7 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 		chi.URLParam(r, "id"),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[Entity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -68,7 +68,7 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.DesignationService.Create(requestBody)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[Entity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
