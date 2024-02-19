@@ -41,7 +41,7 @@ func NewController(
 func (c *Controller) GetNodes(w http.ResponseWriter, r *http.Request) {
 	data, err := c.MembershipService.RetrieveCurrentByEhid(chi.URLParam(r, "ehid"))
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]membership.ViewEntity](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -64,7 +64,7 @@ func (c *Controller) GetHistory(w http.ResponseWriter, r *http.Request) {
 		strings.ToUpper(r.URL.Query().Get("sort")),
 	)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]membership.ViewEntity](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
