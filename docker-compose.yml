@@ -2,7 +2,7 @@ version: '3.8'
 services:
   org:
     container_name: connect-org-core
-    image: ghcr.io/mrexmelle/connect-org:0.2.0
+    image: ghcr.io/mrexmelle/connect-org:0.2.1
     environment:
       - APP_PROFILE=docked
     ports:

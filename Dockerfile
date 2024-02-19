@@ -11,7 +11,7 @@ RUN swag init -g ./cmd/main.go
 RUN go build -o ./connect-org ./cmd/main.go
 RUN rm -rf ./cmd ./internal go
 
-EXPOSE 8080
+EXPOSE 8081
 CMD ["/app/connect-org", "serve"]
 
 LABEL org.opencontainers.image.source https://github.com/mrexmelle/connect-org
