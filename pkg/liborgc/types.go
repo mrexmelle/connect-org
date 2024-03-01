@@ -7,6 +7,6 @@ import (
 )
 
 type GetMemberHistoryResponseDto = member.GetHistoryResponseDto
-type GetMemberNodeResponseDto = member.GetNodesResponseDto
+type GetMemberNodesResponseDto = member.GetNodesResponseDto
 type MembershipViewEntity = membership.ViewEntity
 type ServiceError = dto.ServiceError

@@ -43,9 +43,9 @@ func (c *Client) GetMemberHistoryByEhidOrderByStartDateDesc(
 	return &data, nil
 }
 
-func (c *Client) GetCurrentMembershipByEhid(
+func (c *Client) GetMemberNodesByEhid(
 	ehid string,
-) (*GetMemberNodeResponseDto, error) {
+) (*GetMemberNodesResponseDto, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf("%s/members/%s/nodes", c.BaseUrl, ehid),
@@ -55,7 +55,7 @@ func (c *Client) GetCurrentMembershipByEhid(
 		return nil, err
 	}
 
-	data := GetMemberNodeResponseDto{}
+	data := GetMemberNodesResponseDto{}
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
