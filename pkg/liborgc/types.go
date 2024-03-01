@@ -6,6 +6,7 @@ import (
 	"github.com/mrexmelle/connect-org/internal/membership"
 )
 
-type GetMembershipHistoryResponseDto = member.GetHistoryResponseDto
+type GetMemberHistoryResponseDto = member.GetHistoryResponseDto
+type GetMemberNodesResponseDto = member.GetNodesResponseDto
 type MembershipViewEntity = membership.ViewEntity
 type ServiceError = dto.ServiceError
