@@ -16,9 +16,9 @@ func NewClient(host string, port int) *Client {
 	}
 }
 
-func (c *Client) GetMembershipHistoryByEhidOrderByStartDateDesc(
+func (c *Client) GetMemberHistoryByEhidOrderByStartDateDesc(
 	ehid string,
-) (*GetMembershipHistoryResponseDto, error) {
+) (*GetMemberHistoryResponseDto, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf("%s/members/%s/history?sort=desc", c.BaseUrl, ehid),
@@ -28,7 +28,34 @@ func (c *Client) GetMembershipHistoryByEhidOrderByStartDateDesc(
 		return nil, err
 	}
 
-	data := GetMembershipHistoryResponseDto{}
+	data := GetMemberHistoryResponseDto{}
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	err = json.NewDecoder(response.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (c *Client) GetCurrentMembershipByEhid(
+	ehid string,
+) (*GetMemberNodeResponseDto, error) {
+	req, err := http.NewRequest(
+		http.MethodGet,
+		fmt.Sprintf("%s/members/%s/nodes", c.BaseUrl, ehid),
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	data := GetMemberNodeResponseDto{}
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
