@@ -1,2 +1,33 @@
-*.DS_Store
+.DS_Store
+
+# Binaries
 connect-org
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test / coverage
+coverage.out
+*.test
+
+# Logs
+*.log
+
+# Local env/config overrides
+.env
+.env.*
+
+# Editor / IDE
+.idea/
+.vscode/
+.cursor/
+
+# Temp
+tmp/
+dist/
+build/
+
+# If a stray .git dir exists in the worktree, ignore it
+/.git
+/.git/
