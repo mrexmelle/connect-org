@@ -182,7 +182,7 @@ func (c *Controller) GetLineage(w http.ResponseWriter, r *http.Request) {
 // @Description Get siblings and ancestral siblings of a node
 // @Produce json
 // @Param id path string true "Node ID"
-// @Success 200 {object} GetLineagelSiblingsResponseDto "Success Response"
+// @Success 200 {object} GetLineageSiblingsResponseDto "Success Response"
 // @Failure 400 "BadRequest"
 // @Failure 500 "InternalServerError"
 // @Router /nodes/{id}/lineage-siblings [GET]

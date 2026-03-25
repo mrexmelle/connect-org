@@ -40,11 +40,21 @@ func NewRepository() Repository {
 
 	var readDsn = ""
 	for key, value := range viper.GetStringMapString("app.datasource.read") {
+		if key == "password" {
+			if env := os.Getenv("DB_READ_PASSWORD"); env != "" {
+				value = env
+			}
+		}
 		readDsn += string(key + "=" + value + " ")
 	}
 
 	var writeDsn = ""
 	for key, value := range viper.GetStringMapString("app.datasource.write") {
+		if key == "password" {
+			if env := os.Getenv("DB_WRITE_PASSWORD"); env != "" {
+				value = env
+			}
+		}
 		writeDsn += string(key + "=" + value + " ")
 	}
 

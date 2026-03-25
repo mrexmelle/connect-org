@@ -17,9 +17,10 @@ type Controller struct {
 	DesignationService *Service
 }
 
-func NewController(cfg *config.Service, svc *Service) *Controller {
+func NewController(cfg *config.Service, es *localerror.Service, svc *Service) *Controller {
 	return &Controller{
 		ConfigService:      cfg,
+		LocalErrorService:  es,
 		DesignationService: svc,
 	}
 }

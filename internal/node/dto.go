@@ -25,6 +25,6 @@ type PatchResponseDto = dtorespwithoutdata.Class
 type DeleteResponseDto = dtorespwithoutdata.Class
 type GetChildrenResponseDto = dtorespwithdata.Class[[]Entity]
 type GetLineageResponseDto = dtorespwithdata.Class[tree.Node[Entity]]
-type GetLineagelSiblingsResponseDto = dtorespwithdata.Class[tree.Node[Entity]]
+type GetLineageSiblingsResponseDto = dtorespwithdata.Class[tree.Node[Entity]]
 type GetOfficersResponseDto = dtorespwithdata.Class[[]designation.Entity]
 type GetMembersResponseDto = dtorespwithdata.Class[[]membership.ViewEntity]
