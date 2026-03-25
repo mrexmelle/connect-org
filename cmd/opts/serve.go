@@ -1,8 +1,13 @@
 package opts
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -109,9 +114,25 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{ehid}/history", memberController.GetHistory)
 		})
 
-		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
+		srv := &http.Server{
+			Addr:    fmt.Sprintf(":%d", configService.GetPort()),
+			Handler: r,
+		}
 
-		if err != nil {
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+		go func() {
+			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				panic(err)
+			}
+		}()
+
+		<-quit
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer shutdownCancel()
+		if err := srv.Shutdown(shutdownCtx); err != nil {
 			panic(err)
 		}
 	}
